@@ -1,0 +1,278 @@
+<!--[arg _res,staticPath,basePath,integravip,mallRecommend;]-->
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>积分&nbsp;兑换商城</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+		<style>
+			* {
+				padding: 0px;
+				margin: 0px;
+			}
+			
+			body,
+			html {
+				color: #333;
+				font-family: "Microsoft YaHei";
+			}
+			
+			a {
+				text-decoration: none;
+			}
+			
+			ul li {
+				list-style: none;
+			}
+			
+			header {
+				width: 100%;
+				background: white;
+				text-align: center;
+			}
+			
+			header .logoJianzhuang {
+				width: 50%;
+				margin-top: 20px;
+			}
+			
+			header .bag-total {
+				width: 80%;
+				margin: 0 auto;
+			}
+			
+			header .bag-total>img {
+				width: 20%;
+			}
+			
+			header .bag-total>p {
+				float: right;
+				color: #333;
+				margin-right: 40px;
+				font-size: 0.85rem;
+				font-weight: bold;
+			}
+			
+			header .bag-total>p>span {
+				display: block;
+				color: #CC2424;
+			}
+			
+			.clearfix:after {
+				clear: both;
+				content: "";
+				width: 0;
+				height: 0;
+				visibility: hidden;
+				display: block;
+			}
+			
+			.section-background {
+				width: 100%;
+				height: 10px;
+				background: #fafafa;
+				border-top: 1px solid #e2e1e4;
+				border-bottom: 1px solid #e2e1e4;
+				margin-top: 12px;
+			}
+			
+			
+			#footer-container {
+				width: 100%;
+				height: 56px;
+				position: fixed;
+				bottom: 0;
+				display: flex;
+				overflow: hidden;
+				font-size: 11px;
+			}
+			
+			#footer-container a {
+				padding-top: 8px;
+				flex-flow: row nowrap;
+				flex: 1 1 auto;
+				background: #ca2424;
+				text-align: center;
+				color: white;
+			}
+			
+			#footer-container .active {
+				background: #A00504;
+			}
+			
+			#footer-container a img {
+				width: 24px;
+				height: 24px;
+			}
+			section{
+				width:100%;
+				margin-bottom:100px;
+			}
+			section ul{
+				width:98%;
+				margin:10px auto;
+			}
+			section ul li{
+				width:48%;
+				margin-top:0.1rem;
+				display:inline-block;
+			}
+			section a{
+				display: block;
+				width:100%;
+				height: 5.1rem;
+				border: 1px solid gainsboro;
+			}
+			section .img-outer {
+				width: 3.4rem;
+				height: 5.1rem;
+				float: left;
+				text-align: center;
+				line-height: 5.1rem;
+				overflow: hidden;
+			}
+			section img {
+				max-width: 100%;
+				max-height: 100%;
+				vertical-align: middle;
+			}
+			section .fontInfo {
+				width: 46%;
+				font-size: 0.6rem;
+				float: right;
+				margin-top: 14%;
+				color: black;
+			}
+			.fontInfo h6{
+				background:red;
+				text-align:center;
+				width:1.4rem;
+				color:white;
+				border-radius:3px;
+				margin-top:0.2rem;
+			}
+			section .font-head {
+				line-height: 0.7rem;
+				height:1.4rem;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<img src="${staticPath}/front/images/exchange/logoJianzhuagn.png" alt="" class="logoJianzhuang" />
+			<div class="bag-total clearfix">
+				<img src="${staticPath}/front/images/exchange/foodbag.png" alt="" />
+				<p>我的当前粮食<span><span id="total-weight">${integravip.getAllIntegral()}</span>克</span></p>
+			</div>
+		</header>
+		<section>
+			<ul>
+			<!--[arg mallRecommend;loop(recommend : mallRecommend){]-->
+				<li class="clearfix">
+					<a href="${basePath}/mall/exchange?mallId=${recommend.getId()}" class="aleft">
+						<div class="img-outer">
+							<img src="${recommend.getImg()}" alt="" />
+						</div>
+						<div class="fontInfo">
+							<p class="font-head">${recommend.getPrizeName()}</p>
+							<p>粮食:<span style="color:#CC2424">${recommend.getEchange()}</span>克</p>
+						</div>
+					</a>
+				</li>
+				<!--[}]-->
+			</ul>
+		</section>
+		<fooder>
+			<div id="footer-container">
+				<a href="/JZWX/exchangeMain" class='active'>
+					<img src="${staticPath}/front/images/my/logoexchange.png" alt="" />
+					<div>兑换</div>
+				</a>
+				<a href="/JZWX/luckDraw">
+					<img src="${staticPath}/front/images/my/coujiang.png" alt="" />
+					<div>抽奖</div>
+				</a>
+				<a href="/JZWX/index">
+					<img src="${staticPath}/front/images/my/logoMy.png" alt="" />
+					<div>我的</div>
+				</a>
+
+			</div>
+		</fooder>
+
+	</body>
+	<script>
+		! function(a) {
+			function b() {
+				var b = g.getBoundingClientRect().width;
+				b / c > 640 && (b = 640 * c), a.rem = b / 16, g.style.fontSize = a.rem + "px"
+			}
+			var c, d, e, f = a.document,
+				g = f.documentElement,
+				h = f.querySelector('meta[name="viewport"]'),
+				i = f.querySelector('meta[name="flexible"]');
+			if(h) {
+				var j = h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);
+				j && (d = parseFloat(j[2]), c = parseInt(1 / d))
+			} else if(i) {
+				var j = i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);
+				j && (c = parseFloat(j[2]), d = parseFloat((1 / c).toFixed(2)))
+			}
+			if(!c && !d) {
+				var k = (a.navigator.appVersion.match(/android/gi), a.navigator.appVersion.match(/iphone/gi)),
+					c = a.devicePixelRatio;
+				c = k ? c >= 3 ? 3 : c >= 2 ? 2 : 1 : 1, d = 1 / c
+			}
+			if(g.setAttribute("data-dpr", c), !h)
+				if(h = f.createElement("meta"), h.setAttribute("name", "viewport"), h.setAttribute("content", "initial-scale=" + d + ", maximum-scale=" + d + ", minimum-scale=" + d + ", user-scalable=no"), g.firstElementChild) g.firstElementChild.appendChild(h);
+				else {
+					var l = f.createElement("div");
+					l.appendChild(h), f.write(l.innerHTML)
+				}
+			a.dpr = c, a.addEventListener("resize", function() { clearTimeout(e), e = setTimeout(b, 300) }, !1), a.addEventListener("pageshow", function(a) { a.persisted && (clearTimeout(e), e = setTimeout(b, 300)) }, !1), "complete" === f.readyState ? f.body.style.fontSize = 12 * c + "px" : f.addEventListener("DOMContentLoaded", function() { f.body.setAttribute('fontSize', 12 * c + "px") }, !1), b()
+		}(window);
+	</script>
+	<script>
+//		根据总重量的值转化成每三个一个分隔符","
+		function transformation(content) {
+			var len = content.length;
+			var start, end, result;
+			var middle="";
+			var step = 3;
+			var first = len % 3;
+			if(len <= 3) {
+				result = content;
+			} else {
+				if(first == 0) {
+					start = 0;
+					end = start + step;
+				} else {
+					start = 0;
+					end = start + first;
+				}
+				while(end < len) {
+					middle += content.substring(start, end) + ",";
+					start = end;
+					end = start + step;
+				}
+				result = middle + content.substring(start);
+			}
+			return result;
+		}
+		var content = $('#total-weight').html();
+		var transformationNumber= transformation(content);
+		$('#total-weight').html(transformationNumber);
+	</script>
+
+</html>

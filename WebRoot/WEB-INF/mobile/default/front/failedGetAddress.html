@@ -1,0 +1,164 @@
+<!--[arg _res,staticPath,basePath;]-->
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>兑奖详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="../js/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="../js/common/jquery-ui.js"></script>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			
+			body {
+				font-family: "Microsoft YaHei";
+				background-image: url('../img/my/bg-white.png');
+			}
+			
+			.mask {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				background: rgba(0, 0, 0, .4);
+				z-index: 998;
+				left: 0;
+				top: 0;
+			}
+			
+			.popUp-window {
+				width: 13.5rem;
+				/*height: 6.2rem;*/
+				z-index: 1000;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				margin-left: -6.75rem;
+				margin-top: -3.1rem;
+				background: white;
+				text-align: center;
+			}
+			
+			.popUp-top {
+				width: 100%;
+			}
+			
+			.popUp-top div {
+				font-size: 0.9rem;
+				font-weight: 600;
+				margin: 0.9rem auto 0;
+			}
+			
+			.popUp-top:after {
+				display: block;
+				width: 100%;
+				height: 1px;
+				content: '';
+				transform: scaleY(.5);
+				background-color: rgba(0, 0, 0, .2);
+			}
+			
+			.popUp-top pre {
+				font-size: 0.7rem;
+				font-family: inherit;
+				margin: 5px auto;
+			}
+			
+			.popUp-bottom {
+				font-size: 0.85rem;
+				color: #007aff;
+				display: flex;
+				height: 2.3rem;
+				line-height: 2.3rem;
+			}
+			
+			.popUp-bottom span {
+				width: 100%;
+				padding: 0 0.25rem;
+				cursor: pointer;
+				position: relative;
+			}
+			
+			.sayNo:after {
+				position: absolute;
+				z-index: 15;
+				top: 0;
+				right: 0;
+				bottom: auto;
+				left: auto;
+				display: block;
+				width: 1px;
+				height: 100%;
+				content: '';
+				transform: scaleX(.5);
+				/*transform-origin: 100% 50%;*/
+				background-color: rgba(0, 0, 0, .2);
+			}
+			
+			.sayYes {
+				font-weight: 600;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mask"></div>
+		<div class="popUp-window">
+			<div class="popUp-top">
+				<div>获取地址失败</div>
+				<pre>请在【我的转盘宝贝】中重新输入地址</pre>
+			</div>
+			<div class="popUp-bottom">
+				<span class='sayNo'>返回</span>
+				<span class="sayYes">我的转盘宝贝</span>
+			</div>
+		</div>
+
+	</body>
+	<script>
+		! function(a) {
+			function b() {
+				var b = g.getBoundingClientRect().width;
+				b / c > 640 && (b = 640 * c), a.rem = b / 16, g.style.fontSize = a.rem + "px"
+			}
+			var c, d, e, f = a.document,
+				g = f.documentElement,
+				h = f.querySelector('meta[name="viewport"]'),
+				i = f.querySelector('meta[name="flexible"]');
+			if(h) {
+				var j = h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);
+				j && (d = parseFloat(j[2]), c = parseInt(1 / d))
+			} else if(i) {
+				var j = i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);
+				j && (c = parseFloat(j[2]), d = parseFloat((1 / c).toFixed(2)))
+			}
+			if(!c && !d) {
+				var k = (a.navigator.appVersion.match(/android/gi), a.navigator.appVersion.match(/iphone/gi)),
+					c = a.devicePixelRatio;
+				c = k ? c >= 3 ? 3 : c >= 2 ? 2 : 1 : 1, d = 1 / c
+			}
+			if(g.setAttribute("data-dpr", c), !h)
+				if(h = f.createElement("meta"), h.setAttribute("name", "viewport"), h.setAttribute("content", "initial-scale=" + d + ", maximum-scale=" + d + ", minimum-scale=" + d + ", user-scalable=no"), g.firstElementChild) g.firstElementChild.appendChild(h);
+				else {
+					var l = f.createElement("div");
+					l.appendChild(h), f.write(l.innerHTML)
+				}
+			a.dpr = c, a.addEventListener("resize", function() { clearTimeout(e), e = setTimeout(b, 300) }, !1), a.addEventListener("pageshow", function(a) { a.persisted && (clearTimeout(e), e = setTimeout(b, 300)) }, !1), "complete" === f.readyState ? f.body.style.fontSize = 12 * c + "px" : f.addEventListener("DOMContentLoaded", function() { f.body.setAttribute('fontSize', 12 * c + "px") }, !1), b()
+		}(window);
+	</script>
+	<script type="text/javascript">
+		$('.sayNo').on("click", function() {
+			$('.mask,.popUp-window').hide();
+		});
+		$('.sayYes').on("click", function() {
+			location.href = "myTurnplate.html"
+		})
+	</script>
+
+</html>

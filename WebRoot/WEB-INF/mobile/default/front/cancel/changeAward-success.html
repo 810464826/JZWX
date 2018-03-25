@@ -1,0 +1,99 @@
+<!--[arg _res,staticPath,basePath;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>兑奖详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="../../js/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="../../js/common/jquery-ui.js"></script>
+		<style>
+			*{
+				padding: 0;
+				margin:0;
+			}
+			body {
+				width:100%;
+				font-family: "Microsoft YaHei";
+			}
+			input[type="button"], input[type="submit"], input[type="reset"] {
+				-webkit-appearance: none;
+			}
+			header{
+				width:100%;
+				text-align: center;
+				border-bottom:1px solid #e6e6e6;
+			}
+			header img{
+				margin:20px auto 10px;
+				width:20%;
+			}
+			header h4{
+				margin-bottom:20px;
+			}
+			section{
+				width:100%;
+				font-size: 0.72rem;
+			}
+			section p{
+				width:96%;
+				margin:16px auto;
+			}
+			section div{
+				width:100%;
+				height: 12px;
+				border-top:1px solid #e6e6e6;
+				border-bottom:1px solid #e6e6e6;
+			}
+			footer{
+				width:100%;
+			}
+			footer div{
+				width:80%;
+				margin:40px auto;
+			}
+			footer div:after{
+				width:0;
+				height: 0;
+				visibility: hidden;
+				clear: both;
+				content: "";
+				display: block;
+			}
+			footer input{
+				font-weight: bold;
+				background: none;
+				border:1px solid #e6e6e6;
+				width:4.8rem;
+				height: 1.6rem;
+				border-radius: 3px;
+				font-size:0.72rem;
+			}
+			footer input.right{
+				float:right;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="../../img/cancel/success.png" alt="" />
+			<h4>领奖成功</h4>
+		</header>
+		<section>
+			<p>收货人：<span>杨龙</span>&nbsp;&nbsp;&nbsp;<span>11111</span></p>
+			<p>收货地址：<span>四川省宜宾市翠屏区五粮液大道酒源路</span></p>
+			<div></div>
+		</section>
+		<footer>
+			<div>
+				<a href="#"><input type="button" value="返回列表" /></a>
+				<a href="#"><input type="button" value="返回首页" class="right" /></a>
+			</div>
+		</footer>
+		
+	</body>
+		<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+</html>

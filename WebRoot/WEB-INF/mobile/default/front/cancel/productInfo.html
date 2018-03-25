@@ -1,0 +1,30 @@
+<!--[arg _res,staticPath,basePath,product;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>中奖详情</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/productInfo.css"/>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class='container-logo'>
+				<img src='${staticPath}/front/images/logo.png'>
+			</div>
+			<div align="center" style="margin-top: 2.67rem;"><img src="${product.getImgid()}" alt=""></div>
+			<div style="font-size:0.4rem;text-align:center;font-weight: bold;margin-top: 0.4rem;">奖品信息：${product.getName()}&nbsp;&nbsp;${product.getAlcoholic()}度&nbsp;&nbsp;${product.getCapacity()}ml</div>
+			<div style="font-size:0.27rem;text-align:center;font-weight: 300;margin-top: 0.27rem;">温馨提示：请保留瓶盖，以便业务员为您兑奖。</div>
+			<div class='container-footer'>
+				<img src="${staticPath}/front/images/logo01.png" alt="">
+			</div>	
+		</div>
+	</body>
+</html>

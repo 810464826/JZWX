@@ -1,0 +1,243 @@
+<!--[arg _res,staticPath,basePath,ProductInfo,PrizeNumber,codeId,openid;]-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>扫码赢大奖</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta content="telephone=no" name="format-detection">
+<script type="text/javascript"
+	src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+<style>
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: "Microsoft YaHei";
+	background-size: 100%;
+	color: white;
+	letter-spacing: 2px;
+}
+
+.content {
+	width: 100%;
+	text-align: center;
+	margin-top: 18px;
+}
+
+.content-img {
+	width: 46%;
+}
+
+.getAwardText {
+	padding-top: 0.5rem;
+	font-size: 0.7rem;
+}
+
+.awardPic {
+	width: 4.8rem;
+	height: 4.8rem;
+	margin: 0.8rem auto;
+	text-align: center;
+}
+
+.awardPic img {
+	vertical-align: middle;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.content button {
+	width: 80%;
+	height: 2.1rem;
+	border: none;
+	border-radius: 2px;
+	background: #fabd00;
+	color: white;
+	font-size: 0.8rem;
+	font-weight: bold;
+}
+
+.content .reminder {
+	font-size: 0.7rem;
+	margin-top: 8.8rem;
+}
+</style>
+</head>
+<body
+	style="background-image: url('${staticPath}/front/images/choujiang/getAward/bg.png')">
+	<div class="content">
+		<img src="${staticPath}/front/images/choujiang/getAward/title.png"
+			alt="" class="content-img" />
+		<p class="getAwardText">
+			恭喜您！获得<span id="produce-name">${ProductInfo.getName()}</span>${PrizeNumber}<span
+				id="integral"></span>${ProductInfo.getUnit()}
+		</p>
+		<input type="hidden" id="gettype" value="${ProductInfo.getType()}" />
+		<input type="hidden" id="CardId" value="${ProductInfo.getCardId()}" />
+		<input type="hidden" id="productId" value="${ProductInfo.getId()}" />
+		<input type="hidden" id="codeId" value="${codeId}" /> <input
+			type="hidden" id="openid" value="${openid}" /> <span id="wowow"></span>
+		<div class="awardPic">
+			<img src="${ProductInfo.getImgid()}" alt="" />
+		</div>
+		<button id="getprize">立即领取</button>
+		<p class="reminder">温馨提示：收集积分可以兑换奖品或抽奖！</p>
+	</div>
+</body>
+<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+<script type="text/javascript"
+	src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var gettype = $("#gettype").val();
+		var CardId = $("#CardId").val();
+		var codeId = $("#codeId").val();
+		var productId =$("#productId").val();
+		var openid =$("#openid").val();
+		$.ajax({
+				type: "GET",
+				url: "/JZWX/harvestAddress",
+				async: true,
+				dataType: "json",
+				data: {"href":location.href,"codeId":codeId},
+				success: function(dataaddress){
+					wx.config({
+			              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+			              appId : dataaddress.appId, // 必填，公众号的唯一标识
+			              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+			              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+			              signature : dataaddress.signature,// 必填，签名，见附录1
+			              jsApiList : ['addCard','openAddress']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+			         });
+				},
+				error: function(){
+					
+				}
+		});
+		$("#getprize").click(function(){
+			//卡券
+			if(gettype == 1){
+					$.ajax({
+						type: "GET",
+						url: "/JZWX/front/card/index",
+						async: true,
+						dataType: "json",
+						data: {"cardId":CardId,"codeId":codeId},
+						success: function(data){
+							if(data.restul == "0"){
+								wx.ready(function(){
+									wx.addCard({
+										cardList: [{
+											cardId: data.cardId,
+											cardExt: '{"code":"","openid": "'+data.openid+'", "nonce_str":"'+data.nonceStr+'","timestamp": "'+data.timestamp+'", "signature":"'+data.signature+'"}'
+										}], // 需要添加的卡券列表
+										success: function (res){
+											if(res.isSuccess=true){
+												var code=encodeURIComponent(res.cardList[0].code);
+												$.ajax({
+													type: "GET",
+													url: "/JZWX/front/card/getCard",
+													async: true,
+													dataType: "json",
+													data: {"productId":productId,"code":code,"openid":data.openid,"cardeId":CardId,"codeId":codeId,"restul":1},
+													success: function(data){
+														if(data){
+															location.href="/JZWX/scancode"
+														}else{
+															alert("网络错误");
+														}
+													
+													}
+												});
+												//location.href="/JZWX/front/card/getCard?productId="+productId+"&code="+code+"&openid="+data.openid+"&cardeId="+data.cardId+"&codeId="+codeId+"&restul=扫码";  
+											}
+										},
+										cancel:function(res){
+											alert("未领取");
+										},
+										fail:function(res){
+											alert("网络错误");
+										}
+									});
+								});	
+							}else{
+								alert("已被领取");
+							}
+						}
+					});
+			
+			}else if(gettype == 3){
+				wx.openAddress({
+					success: function (res) {
+								var provice=res.provinceName;
+					    		var city= res.cityName;
+					    		var counties=res.countryName;
+					    		var detail=res.detailInfo;
+					    		var tel =res.telNumber;
+					    		var name=res.userName;
+					    		var address=provice+city+counties+detail;
+					    	$.ajax({
+								type: "GET",
+								url: "/JZWX/front/logistics/getLogisticsAddressfillIn",
+								async: true,
+								dataType: "json",
+								data: {"productId":productId,"openid":openid,"codeId":codeId,"name":name,"phone":tel,"address":address,"restul":1},
+								success: function(data){
+									if(data){
+										location.href="/JZWX/scancode"
+									}else{
+										alert("已经被领取");
+									}
+								}
+							});
+					},
+					cancel: function (esg) { 
+						    $.ajax({
+								type: "GET",
+								url: "/JZWX/front/logistics/getLogisticsAddressNull",
+								async: true,
+								dataType: "json",
+								data: {"productId":productId,"openid":openid,"codeId":codeId,"restul":1},
+								success: function(data){
+									if(data){
+										location.href="/JZWX/scancode"
+									}else{
+										alert("已经被领取");
+									}
+								}
+							});
+					},
+					fail:function(res){
+						$.ajax({
+							type: "GET",
+							url: "/JZWX/front/logistics/getLogisticsAddressNull",
+							async: true,
+							dataType: "json",
+							data: {"productId":productId,"openid":openid,"codeId":codeId,"restul":1},
+							success: function(data){
+								if(data){
+									location.href="/JZWX/scancode"
+								}else{
+									alert("已经被领取");
+								}
+							}
+						});
+					}
+				});
+					
+				wx.error(function (res) {
+				});
+			}
+		});
+	})
+	
+</script>
+
+</html>

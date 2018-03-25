@@ -1,0 +1,44 @@
+<!--[arg _res,staticPath,basePath,apply,localCancel;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>申请详情</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/productInfo.css"/>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+		<style>
+		.infos{
+			width:70%;
+			margin:1rem auto 0px;
+		}
+		.infos div{
+			margin-top:1rem;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class='container-logo'>
+				<img src='${staticPath}/front/images/logo.png'>
+			</div>
+			<div class="infos">
+				<div><p>申请经销商：${apply.getApplyOffice()}</p></div>
+				<div><p>申请人：${apply.getApplyUsername()}</p></div>
+				<div><label>申请对账明细如下：</label></div>
+				<div><p>对账奖品：${localCancel.getPrizeName()}</p></div>
+				<div><p>对账数量：${localCancel.getNumber()}</p></div>
+				<div><p>申请时间：${apply.getApplyTime()}</p></div>
+				</div>
+			<div class='container-footer'>
+				<img src="${staticPath}/front/images/logo01.png" alt="">
+			</div>	
+		</div>
+	</body>
+</html>

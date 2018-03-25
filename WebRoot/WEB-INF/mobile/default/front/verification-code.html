@@ -1,0 +1,356 @@
+<!--[arg _res,staticPath,basePath,QRcode,Subscribe,exchange;]-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>扫码赢大奖</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta content="telephone=no" name="format-detection">
+<script type="text/javascript"
+	src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+
+<style>
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: "Microsoft YaHei";
+	letter-spacing: 2px;
+	background-size: cover;
+}
+
+.content {
+	width: 80%;
+	margin: 0.95rem auto 0;
+	text-align: center;
+	color: white;
+}
+
+.title-logo {
+	width: 80%;
+}
+
+.content>p {
+	font-size: 1.5rem;
+	margin: 1.25rem auto;
+}
+
+form input {
+	width: 100%;
+	height: 2rem;
+	border: none;
+	border-radius: 2px;
+}
+
+input[type='text'] {
+	font-size: 0.8rem;
+	text-align: center;
+	font-weight: 600;
+	margin-bottom: 1rem;
+}
+
+input[type='button'] {
+	font-size: 0.6rem;
+	font-weight: 600;
+	margin-bottom: 1.5rem;
+	color: white;
+	background: #fcbe17;
+	-webkit-appearance: none;
+}
+
+.sweepCodeExample {
+	position: relative;
+	text-align: left;
+}
+
+.sweepCodeExample>img {
+	left: 10px;
+	width: 60%;
+}
+
+.sweepCodeExample>p {
+	width: 50%;
+	font-size: 12px;
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	line-height: 2;
+}
+/*灰色遮罩层*/
+.fade {
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 99;
+}
+/*弹出层*/
+.succ-pop {
+	width: 10.2rem;
+	height: 5.2rem;
+	background: rgba(255, 255, 255, .95);
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -5.1rem;
+	margin-top: -2.6rem;
+	z-index: 999;
+	text-align: center;
+}
+
+.succ-pop h3.title {
+	height: 3rem;
+	width: 100%;
+}
+
+.succ-pop h3.title p {
+	margin-top: 0.65rem;
+	font-size: 0.7rem;
+}
+
+.succ-pop h3.title div {
+	font-size: 0.7rem;
+	font-weight: 500;
+}
+
+.succ-pop-line {
+	width: 100%;
+	height: 1px;
+	background: rgba(0, 0, 0, .2);
+	transform: scaleY(.5);
+}
+
+.succ-pop h3.confirm {
+	width: 100%;
+	font-size: 0.7rem;
+	font-weight: 600;
+	margin-top: 2px;
+	color: #007aff;
+	cursor: pointer;
+}
+
+.qrCode-outer {
+	width: 13.25rem;
+	height: 11.4rem;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -6.5rem;
+	margin-top: -5.7rem;
+	z-index: 999;
+	color: white;
+	text-align: center;
+	font-size: 0.8rem;
+}
+
+.qrCode-outer img {
+	width: 8rem;
+	height: 8rem;
+}
+</style>
+</head>
+
+<body
+	style="background-image: url('${staticPath}/front/images/choujiang/verificationCode/bg-red-small.png')">
+	<div class="content">
+		<img class="title-logo"
+			src="${staticPath}/front/images/choujiang/verificationCode/titleLogo.png"
+			alt="" />
+		<p>输入验证码</p>
+		<form action="">
+			<input type="hidden" id="exchange" value="${exchange}" /> <input
+				type="hidden" id="QRcode" value="${QRcode}" /> <input type="hidden"
+				id="Subscribe" value="${Subscribe}" /> <input type="text"
+				name="text" id="verification" placeholder="请输入4位验证码" /> <input
+				type="button" id="clickOK" value="提交" />
+		</form>
+		<div class="sweepCodeExample">
+			<img
+				src="${staticPath}/front/images/choujiang/verificationCode/verify_scan.png"
+				alt="" />
+			<p>提示：刮开二维码标识顶部的遮盖区域即可获得验证码，输入验证码即可进入中奖页面</p>
+		</div>
+	</div>
+	<!--弹窗-->
+	<div id="popup" style="display: none;">
+		<div class="fade"></div>
+		<div class="succ-pop">
+			<h3 class="title">
+				<p>提示</p>
+				<div>验证码输入错误</div>
+			</h3>
+			<div class="succ-pop-line"></div>
+			<h3 class="confirm">确定</h3>
+		</div>
+	</div>
+	<!--关注公众号弹窗-->
+	<div id="popup-qrCode" style="display: none;">
+		<div class="fade"></div>
+		<div class="qrCode-outer">
+			<img src="${staticPath}/front/images/my/QR-code.jpg" alt="" />
+			<p>请长按识别图中二维码，关注我们的公众号。</p>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUtBCLA8dFeXmCXYbUUaeQzjswpw0De5"></script>
+<script>
+		! function(a) {
+			function b() { var b = g.getBoundingClientRect().width;
+				b / c > 640 && (b = 640 * c), a.rem = b / 16, g.style.fontSize = a.rem + "px" } var c, d, e, f = a.document,
+				g = f.documentElement,
+				h = f.querySelector('meta[name="viewport"]'),
+				i = f.querySelector('meta[name="flexible"]'); if(h) { var j = h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);
+				j && (d = parseFloat(j[2]), c = parseInt(1 / d)) } else if(i) { var j = i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);
+				j && (c = parseFloat(j[2]), d = parseFloat((1 / c).toFixed(2))) } if(!c && !d) { var k = (a.navigator.appVersion.match(/android/gi), a.navigator.appVersion.match(/iphone/gi)),
+					c = a.devicePixelRatio;
+				c = k ? c >= 3 ? 3 : c >= 2 ? 2 : 1 : 1, d = 1 / c } if(g.setAttribute("data-dpr", c), !h)
+				if(h = f.createElement("meta"), h.setAttribute("name", "viewport"), h.setAttribute("content", "initial-scale=" + d + ", maximum-scale=" + d + ", minimum-scale=" + d + ", user-scalable=no"), g.firstElementChild) g.firstElementChild.appendChild(h);
+				else { var l = f.createElement("div");
+					l.appendChild(h), f.write(l.innerHTML) }
+			a.dpr = c, a.addEventListener("resize", function() { clearTimeout(e), e = setTimeout(b, 300) }, !1), a.addEventListener("pageshow", function(a) { a.persisted && (clearTimeout(e), e = setTimeout(b, 300)) }, !1), "complete" === f.readyState ? f.body.style.fontSize = 12 * c + "px" : f.addEventListener("DOMContentLoaded", function() { f.body.setAttribute('fontSize', 12 * c + "px") }, !1), b() }(window);
+	</script>
+<script>
+	var response=$("#Subscribe").val();
+					if(response=="0"){
+						$("#popup-qrCode").show();
+						
+					}else if(response=="1"){
+						$("#popup-qrCode").hide();
+						var QRcode = $("#QRcode").val();
+						$.ajax({
+							type: "GET",
+							url: "/JZWX/harvestAddress",
+							async: true,
+							dataType: "json",
+							data: {"href":location.href},
+							success: function(dataaddress){	
+								wx.config({
+						              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+						              appId : dataaddress.appId, // 必填，公众号的唯一标识
+						              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+						              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+						              signature : dataaddress.signature,// 必填，签名，见附录1
+						              jsApiList : ['getLocation']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+						         });
+							}
+						});
+						wx.ready(function(){
+							wx.getLocation({
+							    type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+							    success: function (res) {
+							        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+							        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+							        var speed = res.speed; // 速度，以米/每秒计
+							        var accuracy = res.accuracy; // 位置精度
+							        var err = res.errMsg;
+							        if(err=="getLocation:ok"){
+							        	var map = new BMap.Map("allmap");
+							        	var point = new BMap.Point(longitude,latitude);
+							        	var gc = new BMap.Geocoder(); 
+										var province= null;
+										var city= null;
+										var district= null;
+										var street= null;
+							        	gc.getLocation(point, function(rs) {
+											var addComp = rs.addressComponents;
+												province= addComp.province;
+												city=addComp.city ;
+												district=addComp.district;
+												street=addComp.street ;
+												//streetNumber=addComp.streetNumber;
+												$.ajax({
+													type: "POST",
+													url: "/JZWX/sign/saveSacnAddress",
+													async: true,
+													dataType: "json",
+													data: {"QRcode":QRcode,"province":province,"city":city,"district":district,"street":street,"longitude":longitude,"latitude":latitude},
+													success: function(dataaddress){	
+														
+													},
+													error:function(dataaddress){	
+														
+													},
+												});
+							        	});
+							        }else{
+							        	
+							        }
+							    }
+							});
+						});
+					}
+	var exchange = $("#exchange").val();
+	if(exchange == "1"){
+		$('.title p').html('抱歉');
+		$('.title div').html('瓶码已被兑换');
+		$('#popup').fadeIn(400);
+		$('.confirm').on('click',function(){
+			$('#popup').fadeOut(400);
+		})
+	}
+	function ajaxmethod(){
+			var validate = $("#verification").val();
+			var QRcode = $("#QRcode").val();
+				$.ajax({
+					type: "GET",
+					url: "/JZWX/sign/Verification",
+					async: true,
+					dataType: "json",
+					data: {"validate":validate,"QRcode":QRcode},
+					success: function(data){
+						if(data.back == "已兑换"){
+							$('.title p').html('抱歉');
+							$('.title div').html('瓶码已被兑换');
+							$('#popup').fadeIn(400);
+							$('.confirm').on('click',function(){
+								$('#popup').fadeOut(400);
+							})
+						}
+						if(data.back == "不匹配"){
+							$('.title p').html('抱歉');
+							$('.title div').html('验证码输入错误');
+							$('#popup').fadeIn(400);
+							$('.confirm').on('click',function(){
+								$('#popup').fadeOut(400);
+							})
+						}
+						if(data.back == "异常"){
+							$('.title p').html('抱歉');
+							$('.title div').html('二维码异常，请重新扫码。');
+							$('#popup').fadeIn(400);
+							$('.confirm').on('click',function(){
+								$('#popup').fadeOut(400);
+							})
+						}
+						if(data.back == "OK"){
+							var codeId = data.qrcodeid;
+							location.href="/JZWX/sign/Award?codeId="+codeId;
+						}
+					},
+					error: function(){
+						//alert("出错");
+					}
+				});
+			}
+		
+		$("#clickOK").click(function(){
+			ajaxmethod();
+		})
+		$("#verification").on("keydown",function(e){
+			if(e.keyCode == 13){
+				$("#clickOK").click();
+				e.preventDefault();
+				//ajaxmethod();
+			}
+		})
+	</script>
+</html>

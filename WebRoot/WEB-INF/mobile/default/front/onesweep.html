@@ -1,0 +1,119 @@
+<!--[arg _res,staticPath,basePath;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>扫码有惊喜</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<meta name="screen-orientation" content="portrait">  
+		<script type="text/javascript" src="${staticPath}/front/js/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/common/jquery-ui.js"></script>
+		<style>
+			*{
+				padding:0px;
+				margin:0px;
+			}
+			body{
+				font-family: "Microsoft YaHei";
+				/*position:fixed;*/
+			}
+			input[type="button"], input[type="submit"], input[type="reset"] {
+				-webkit-appearance: none;
+			}
+			header{
+				text-align: center;
+			}
+			header img{
+				width:64%;
+				margin:40px auto 20px;
+			}
+			section{
+				width:100%;
+				border-top:1px solid #e3e3e3;
+				border-bottom:1px solid #e3e3e3;
+				font-size:0.7rem;
+			}
+			.section-container{
+				width:90%;
+				margin:10px auto;
+				text-align: center;
+			}
+			.section-container p,div{
+				text-align: left;
+			}
+			.section-container img{
+				width:18%;
+				margin:16px auto;
+			}
+			footer{
+				width:100%;
+				background-size:cover;
+				text-align:center;
+				height:7.6rem;
+			}
+			footer input{
+				width: 50%;
+				height:2.6rem;
+				background-color: rgb(202, 36, 38);
+				color: white;
+				font-size: 1rem;
+				font-family: 微软雅黑;
+				border: none;
+				text-align: center;
+				border-radius: 3px;
+				margin-top:2.5rem;
+	
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="${staticPath}/front/images/onesweep/logoJianzhuagn.png" alt="" />
+		</header>
+		<section>
+			<div class="section-container">
+				<p>扫码方式</p>
+				<img src="${staticPath}/front/images/onesweep/onesweep.png" alt="" />
+				<div>在尖庄酒的<strong>&nbsp;瓶盖上&nbsp;</strong>找到二维码，按下方<strong>&nbsp;【扫一扫】&nbsp;</strong>参加扫码兑奖活动。</div>
+			</div>
+		</section>
+		<footer style="background: url('${staticPath}/front/images/my/bg-white.png') no-repeat">
+			<input type="button" value="扫一扫" />
+		</footer>
+	</body>
+		<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+		<script>
+			$(function(){
+				$("footer input").on("click",function(){
+					$.ajax({
+						type: "GET",
+						url: "/JZWX/onesweep",
+						async: true,
+						dataType: "json",
+						data: {"href":location.href},
+						success: function(dataaddress){
+							wx.config({
+					              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+					              appId : dataaddress.appId, // 必填，公众号的唯一标识
+					              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+					              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+					              signature : dataaddress.signature,// 必填，签名，见附录1
+					              jsApiList : ['scanQRCode']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+					         });
+							wx.scanQRCode({
+							    needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+							    scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+							    success: function (res) {
+							    	var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+								}
+							});
+						},
+					});
+				})
+			})
+			
+		</script>
+</html>

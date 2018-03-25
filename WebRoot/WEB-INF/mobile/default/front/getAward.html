@@ -1,0 +1,122 @@
+<!--[arg _res,staticPath,basePath,ProductInfo,integralRule,openid,codeId,ProductInfoId;]-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>扫码赢大奖</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta content="telephone=no" name="format-detection">
+<script type="text/javascript"
+	src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+<style>
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: "Microsoft YaHei";
+	background-size: 100%;
+	color: white;
+	letter-spacing: 2px;
+}
+
+.content {
+	width: 100%;
+	text-align: center;
+	margin-top: 18px;
+}
+
+.content-img {
+	width: 46%;
+}
+
+.getAwardText {
+	padding-top: 0.5rem;
+	font-size: 0.7rem;
+}
+
+.awardPic {
+	width: 4.8rem;
+	height: 4.8rem;
+	margin: 0.8rem auto;
+	text-align: center;
+}
+
+.awardPic img {
+	vertical-align: middle;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.content button {
+	width: 80%;
+	height: 2.1rem;
+	border: none;
+	border-radius: 2px;
+	background: #fabd00;
+	color: white;
+	font-size: 0.8rem;
+	font-weight: bold;
+}
+
+.content .reminder {
+	font-size: 0.7rem;
+	margin-top: 8.8rem;
+}
+</style>
+</head>
+<body
+	style="background-image: url('${staticPath}/front/images/choujiang/getAward/bg.png')">
+	<div class="content">
+		<img src="${staticPath}/front/images/choujiang/getAward/title.png"
+			alt="" class="content-img" />
+		<p class="getAwardText">
+			恭喜您！获得<span id="produce-name">${ProductInfo.getName()}</span>粮食积分<span
+				id="integral">${integralRule}</span>${ProductInfo.getUnit()}
+		</p>
+		<div class="awardPic">
+			<img src="${ProductInfo.getImgid()}" alt="" />
+		</div>
+		<input type="hidden" id="integralRule" value="${integralRule}" />
+		<input type="hidden" id="codeId" value="${codeId}" /> <input
+			type="hidden" id="openid" value="${openid}" /> <input type="hidden"
+			id="ProductInfoId" value="${ProductInfoId}" />
+		<button onclick="receive()">领取积分</button>
+		<p class="reminder">温馨提示：收集积分可以兑换奖品或抽奖！</p>
+	</div>
+</body>
+<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+<script type="text/javascript">
+		function receive (){
+			var codeId = $("#codeId").val();
+			var openId = $("#openid").val();
+			var ProductInfoId = $("#ProductInfoId").val();
+			var integralRule = $("#integralRule").val();
+			$.ajax({
+					type: "GET",
+					url: "/JZWX/sign/receiveIntegral",
+					async: false,
+					dataType: "json",
+					data: {"codeId":codeId,"openId":openId,"ProductInfoId":ProductInfoId,"integral":integralRule},
+					success: function(data){
+						if(data){
+							location.href = "${basePath}/index";
+						}else{
+							alert("");
+							location.href = "${basePath}/index";
+						}
+						
+					},
+					error: function(){
+						//alert("网络错误,请从新扫码");
+					}
+				});
+		}
+	</script>
+
+</html>

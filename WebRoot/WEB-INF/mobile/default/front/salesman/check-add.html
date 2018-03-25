@@ -1,0 +1,235 @@
+<!--[arg basePath,staticPath,phone,localCancelList;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>添加对账</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/check-add.css"/>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-ui.js"></script>
+	</head>
+	<body style=" background-image:url('${staticPath}/front/images/salesman/bg.png')">
+		<div class="container">
+			<div class='container-head' style="background-image:url('${staticPath}/front/images/salesman/11.png');">
+			</div>
+			<!--[ loop(c:localCancelList){ ]-->
+			<div class="footer">
+				<div class="left">
+					<p>核销经销商：${c.getCancelOffice()}</p>
+				</div>
+				<div class="right">
+					<p>总计：${c.getNumber()}</p>
+				</div>
+				<div class="btns">
+				<input type="hidden" value="${c.getId()}" />
+					<p class="lookInfo">查看明细</p>
+					<p class="yes">添加对账</p>
+				</div>
+			</div>
+			<!--[ } ]-->
+			<!--点击确定弹出层-->
+			<div class="bg-mask add-check" style="display: none;">
+				<div class="box1">
+					<img src="${staticPath}/front/images/salesman/guanbi -icon.png" alt="" />
+					<h4>添加对账</h4>
+					<div class="checkTime">
+						<label for="">对账时间：</label>
+						<input type="date" id="checkTime" />
+					</div>
+					<div class="checkPerson">
+						<label for="">对账业务员：</label>
+						<select name="" id="personSel">
+						</select>
+					</div>
+					<div class="checkInfo">
+						<label for="">对账详情：</label>
+						<textarea name="" rows="" cols="" id="checkInfo"></textarea>
+					</div>
+					
+					<div class="surebtn">
+						<h5>确定</h5>
+					</div>
+				</div>	
+			</div>
+		</div>
+		<!--点击确定弹出层-->
+			<div class="bg-mask sure" style="display: none;">
+				<div class="box2">
+					<img src="${staticPath}/front/images/salesman/guanbi -icon.png" alt="" />
+					<p class="pop-look">查看详情</p>
+					<div class="table-outer">
+						<table>
+							<thead>
+								<tr>
+									<th>核销人</th><th>奖品名称</th><th>数量(瓶)</th><th>日期</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>	
+			</div>
+			<p class="noData" style="display:none">暂无数据。。。</p>
+	</body>
+	<script>
+	/*动态创建信息表格*/
+	function createTable(content) {
+		/*动态创建表格之前先将除表头外的信息清空*/
+		$('.table-outer tbody').html("");
+			var tr = $("<tr></tr>");
+			tr.appendTo($('.table-outer tbody'));
+			var td1 = $('<td>' + content.userName
+					+ '</td>');
+			var td2 = $('<td>' + content.productName
+					+ '</td>');
+			var td3 = $('<td>' + content.cancelNumber
+					+ '</td>');
+			var td4 =$('<td>' + content.createTime
+					+ '</td>');
+			td1.appendTo(tr);
+			td2.appendTo(tr);
+			td3.appendTo(tr);
+			td4.appendTo(tr);
+	};
+	//日期控件
+	function dateCP(sid, eid, n) {
+		var result = dateCompare(sid, eid, n);
+		if(result.etime) {
+			$("#endTime").val(result.etime);
+		}
+		if(result.stime) {
+			$("#startTime").val(result.stime);
+		}
+	}
+
+	function dateCompare(startId, endId, n) {
+		var startTime = $("#" + startId).val();
+		//监听输入框是否为空，为空则把当前时间赋值给输入框
+		if(!startTime) {
+			startTime = 0;
+		}
+		var endTime = $("#" + endId).val();
+		if(!endTime) {
+			endTime = 0;
+		}
+		var abc = dateCheck(startTime, endTime, n)
+		return abc;
+	}
+
+	function dateCheck(startTime, endTime, n) {
+		//startTime的格式为2017-06-07
+		var stime = new Date(startTime);
+		//stime的格式为中国标准时间
+		var etime = new Date(endTime);
+		var s = Date.parse(stime); //将中国标准时间日期转化成毫秒数
+		var e = Date.parse(etime);
+		var result = {};
+		function compare() {
+			//当开始时间大于结束时间时
+			if(s>e) {
+				//n=1,当对开始时间进行选择的时候，将开始时间赋值给结束时间。
+				//n=2,当对结束时间进行选择的时候，将结束时间赋值给开始时间。
+				if(n == 1) {
+					result.res = "false";
+					result.etime = startTime;
+				} else {
+					result.res = "false";
+					result.stime = endTime;
+				}
+			} else {
+				result.res = "true";
+			}
+		}
+		compare();
+		return result;
+	}
+	
+	//判断有无数据 
+	$(function(){
+		if(${localCancelList.size()}==0){
+			$(".noData").show();
+		}
+	})
+		/*点击确定删除里面的关闭按钮*/
+		$(".box1 img,.box2 img").click(function(){
+			$(".sure").hide();
+			$(".add-check").hide();
+		})
+		$(".lookInfo").on("click",function(){
+			$(".sure").show();
+				var getId=$(this).parent().find("input").val();
+				$.ajax({
+					url : "/JZWX/cancel/lookCancelInfo",
+					type : "POST",
+					dataType : "JSON",
+					async : "false",
+					data : {
+						"cancelId" : getId
+					},
+					success : function(data) {
+						createTable(data)
+					}
+				});
+		});
+		var getIds;
+		$(".yes").on("click",function(){
+			$(".add-check").show();
+			$("#checkTime").val("");
+			$("#checkInfo").val("");
+			getIds=$(this).parent().find("input").val();
+			$.ajax({
+				url : "/JZWX/cancel/getSelfSalesMan",
+				type : "POST",
+				dataType : "JSON",
+				async : "false",
+				data : {
+					"phone" : '${phone}'
+				},
+				success : function(data) {
+					for(var i in data){
+						var option=$("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+						$("#personSel").append(option);
+					}
+				}
+			});
+		});
+		$(".surebtn").on("click",function(){
+			var checkTime=$("#checkTime").val();
+			var personSel=$("#personSel option:checked").val();
+			var personSelName=$("#personSel option:checked").text();
+			var checkInfo=$("#checkInfo").val();
+			$.ajax({
+				url : "/JZWX/cancel/saveAccount",
+				type : "POST",
+				dataType : "JSON",
+				async : "false",
+				data : {
+					"phone" : '${phone}',
+					"selectTime":checkTime,
+					"salseId":personSel,
+					"textarea":checkInfo,
+					"cancelId":getIds,
+					"salseName":personSelName
+				},
+				success : function(data) {
+					$(".add-check").hide();
+					location.href="/JZWX/cancel/accountListManage?phone=${phone}";
+				}
+			});
+		});
+		//查询事件
+		$(".search").on("click",function(){
+			var dealer=$("#dealer").val();
+			var startTime=$("#startTime").val();
+			var endTime=$("#endTime").val();
+			//将以上值通过ajax传给后台
+		})
+	</script>
+</html>

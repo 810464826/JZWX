@@ -1,0 +1,471 @@
+<!--[arg _res,staticPath,basePath,restul,user,local,allNumber,localcheck,accounts;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>核销</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+		<style>
+			*{
+				padding:0px;
+				margin:0px;
+			}
+			body {
+				width:100%;
+				font-family: "Microsoft YaHei";
+				background-color: #f8f8f8;
+			}
+			input[type="button"], input[type="submit"], input[type="reset"] {
+				-webkit-appearance: none;
+			}
+			
+			a {
+				text-decoration: none;
+				color:gray;
+			}
+			header{
+				width:90%;
+				height: 7.2rem;
+				margin:10px auto 0;
+				text-align: center;
+			}
+			ul li{
+				list-style-type: none;
+				color:gray;
+				font-size:0.6rem;
+			}
+			ul:after{
+				clear:both;
+				display:block;
+				width:0;
+				height: 0;
+				visibility: hidden;
+				content: "";
+			}
+			ul .ul-left{
+				float:left;
+			}
+			ul .ul-righta,.ul-rightb{
+				float:right;
+			}
+			header input[type="button"]{
+				width: 64%;
+				height:1.8rem;
+				background-color: rgb(202, 36, 38);
+				color: white;
+				font-size: 0.8rem;
+				font-family: 微软雅黑;
+				border: none;
+				text-align: center;
+				border-radius: 3px;
+				margin-top:38px;
+			}
+			section{
+				width:100%;
+				background: white;
+				font-size:0.6rem;
+			}
+			.contain-outer{
+				width:100%;
+			}
+			.contain-outer .cancelText{
+				width:90%;
+				font-size:0.7rem;
+				border-top:1px solid #e1e1e1;
+				border-bottom:1px solid #e1e1e1;
+				padding:12px 5%;
+			}
+			section table{
+				width:100%;
+				margin:10px auto;
+				text-align: center;
+				font-size:0.6rem;
+				
+			}
+			table tr{
+				height: 20px;
+			}
+			table thead tr{
+				font-size:0.6rem;
+			}
+			table .prizeName{
+				width:36%;
+			}
+			.contain-outer>p{
+				text-align: center;
+				font-size:0.7rem;
+				color:gray;
+				margin-bottom:7.5rem;
+			}
+			.contain-outer .cancelFont{
+				color:#cd1f21;
+				width:90%;
+				font-size:0.7rem;
+				border-top:1px solid #e1e1e1;
+				border-bottom:1px solid #e1e1e1;
+				padding:12px 5%;
+			}
+			.contain-outer .cancel-date{
+				width:26%;
+			}
+			footer{
+				width:90%;
+				margin:0 auto 10px;
+				margin-top:10px;
+				color:gray;
+				font-size:0.64rem;
+			}
+			footer .footer-textb:after{
+				content: "";
+				display: block;
+				width:0;
+				height: 0;
+				visibility: hidden;
+				clear: both;
+			}
+			footer .footer-textb p{
+				float:left;
+			}
+			footer .footer-textb div{
+				float:right;
+			}
+			/*灰色遮罩层*/
+
+			.fade {
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.3);
+				position: fixed;
+				left: 0;
+				top: 0;
+				z-index: 99;
+			}
+			
+			
+			/*弹出层*/
+			
+			.succ-pop {
+				width: 14.5rem;
+				height: 17.2rem;
+				background: #f7f7f7;
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				margin-left: -7.25rem;
+				margin-top: -8.6rem;
+				z-index: 999;
+				font-size:0.6rem;
+			}
+			.succ-pop .succPopHead{
+				width:100%;
+				background: #ca2424;
+				color:white;
+				height: 2rem;
+			}
+			.succ-pop>div>p{
+				width:94%;
+				margin:0 auto;
+				line-height: 2rem;
+			}
+			.succ-pop table{
+				width:100%;
+				text-align: center;
+				border-collapse: collapse;
+			}
+			.succ-pop table thead{
+				border-bottom: 1px solid gainsboro;
+			}
+			.succ-pop table tr{
+				height: 1rem;
+			}
+			.succ-pop table .thead{
+				line-height: 1.4rem;
+			}
+			/*点击商家注销弹窗*/
+			.mask {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				background: rgba(0, 0, 0, .4);
+				z-index: 998;
+				left: 0;
+				top: 0;
+			}
+			
+			.popUp-window {
+				width: 13.5rem;
+				z-index: 1000;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				margin-left: -6.75rem;
+				margin-top: -3.1rem;
+				background: white;
+				text-align: center;
+			}
+			
+			.popUp-top {
+				width: 96%;
+				margin:0 auto;
+			}
+			
+			.popUp-top div {
+				font-size: 0.9rem;
+				font-weight: 600;
+				margin: 0.9rem auto 0.9rem;
+			}
+			
+			.popUp-top:after {
+				display: block;
+				width: 100%;
+				height: 1px;
+				content: '';
+				transform: scaleY(.5);
+				background-color: rgba(0, 0, 0, .2);
+			}
+			.popUp-bottom {
+				font-size: 0.85rem;
+				color: #007aff;
+				display: flex;
+				height: 2.3rem;
+				line-height: 2.3rem;
+			}
+			
+			.popUp-bottom span {
+				width: 100%;
+				padding: 0 0.25rem;
+				cursor: pointer;
+				position: relative;
+			}
+			
+			.sayNo:after {
+				position: absolute;
+				z-index: 15;
+				top: 0;
+				right: 0;
+				bottom: auto;
+				left: auto;
+				display: block;
+				width: 1px;
+				height: 100%;
+				content: '';
+				transform: scaleX(.5);
+				/*transform-origin: 100% 50%;*/
+				background-color: rgba(0, 0, 0, .2);
+			}
+			
+			.sayYes {
+				font-weight: 600;
+			}
+			.popUp-bottom-confirm{
+				text-align: center;
+				padding:10px;
+				cursor: pointer;
+				color: #007aff;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<ul>
+				<li class="ul-left">待对账</li>
+				<li style="margin-left:9rem;font-size:0.66rem;color:red;">${user.getLoginName()}</li>
+				<li class="ul-rightb" style="display:none"><a href="/JZWX/cancel/goLogin">登录账户</a></li>
+				<li class="ul-righta" style="display:none">
+					<a href=""  class="merchant-cancel">退出登录</a>
+					<span>|</span>
+					<span id="changePwd">修改密码</span>
+				</li>
+				<input type="hidden" id="result" value="${restul}"/>
+				<input type="hidden" id="accountsConfirmId" value="${accounts.getAccountsConfirmId()}"/>
+				<input type="hidden" id="userId" value="${user.getId()}"/>
+			</ul>
+			<input type="button" id="hexiao" value="我要核销" />
+		</header>
+		<section>
+			<div class="contain-outer">
+				<div class="cancelText"><p>核销记录</p></div>
+				<table>
+					<thead>
+						<tr><td class="prizeName">奖品名称</td><td>核销人</td><td>数量</td><td class="cancel-date">核销日期</td></tr>
+					</thead>
+					<tbody>
+					<!--[arg local;loop(localcancel : local){]-->
+						<tr><td>${localcancel.getPrizeName()}</td><td>${localcancel.getCancelUser()}</td><td>${localcancel.getNumber()}</td><td>${localcancel.getCreateTime()}</td></tr>
+					<!--[}]-->
+					</tbody>
+				</table>
+				<!--<p>暂无核销记录...</p>-->
+				<div class="cancelFont">已核销：${allNumber}个</div>
+			</div>
+		</section>
+		<footer>
+			<!--[if(accounts == null){]-->
+				<div class="footer-texta">暂无对账记录</div>
+			<!--[}else{]-->
+				<div class="footer-textb">
+					<p>上次对账：${accounts.getSelectTime()}</p>
+					<div><i id="lishi">历史记录</i></div>
+				</div>
+			<!--[}]-->
+		</footer>
+		<!--点击待对账弹窗-->
+		<div id="popup" style="display: none;">
+		    <div class="fade"></div>
+		    <div class="succ-pop">
+		        <div class="succPopHead"><p>待对账列表</p></div>
+		       	<div class="line"></div>
+		       <table>
+		        	<thead>
+	        			<tr class="thead"><td>序号</td><td>经销商</td><td>时间</td></tr>
+	        		</thead>
+	        		<tbody>
+	        		<!--[arg localcheck;loop(lc : localcheck){]-->
+		        		<tr><td>${lc_index+1}</td><td>${lc.getCancelOffice()}</td><td>${lc.getCreateTime()}</td></tr>
+		        	<!--[}]-->
+	        		</tbody>
+		        </table>
+		    </div>
+		</div>
+		
+		<!--点击商家注销弹窗-->
+		<div id="merchant-cancel-pop" style="display:none">
+			<div class="mask"></div>
+			<div class="popUp-window">
+				<div class="popUp-top">
+					<div>您确认要退出登录吗？</div>
+				</div>
+				<div class="popUp-bottom">
+					<span class='sayNo'>取消</span>
+					<span class="sayYes">确认</span>
+				</div>
+			</div>
+		</div>
+		<!--本地和异地核销成功弹窗，注意里面的提示内容不一样，需要判断-->
+		<div id="cancel-success-pop" style="display:none">
+			<div class="mask"></div>
+			<div class="popUp-window">
+				<div class="popUp-top">
+					<!--本地核销成功-->
+					<div>核销成功!</div>
+					<!--异地核销成功
+					<div>您好，该次活动地区仅限<span>四川</span>地区，请到当地兑换奖品。请提醒消费者，返回公众号查看兑换通知，按步骤进行异地兑奖。</div>-->
+				</div>
+				<div class="popUp-bottom-confirm">
+					确定
+				</div>
+			</div>
+		</div>
+	</body>
+		
+	</body>
+		<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+		<script type="text/javascript"
+	src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+		<script>
+		$(document).ready(function(){
+			var result=$("#result").val();
+			if(result=="true"){
+				$(".ul-rightb").hide();
+				$(".ul-righta").show();
+			}else{
+				$(".ul-rightb").show();
+				$(".ul-righta").hide();
+			}
+			
+			
+			$(function(){
+				$(".fade").on("click",function(){
+					$("#popup").hide();
+				});
+				$("header .ul-left").on("click",function(){
+					$("#popup").show();
+				})
+			})
+			
+			$("#changePwd").on("click",function(){
+				var userId=$("#userId").val();
+				location.href="/JZWX/cancel/updatePassword?userId="+userId;
+			})
+			
+			$("#lishi").on("click",function(){
+				var accountsConfirmId=$("#accountsConfirmId").val();
+				location.href="/JZWX/cancel/getAllAccounts?accountsConfirmId="+accountsConfirmId;
+			})
+			
+			//点击商家注销弹出弹窗，点击取消弹窗消失
+			$(".merchant-cancel").on("click",function(e){
+				e.preventDefault();
+				$("#merchant-cancel-pop").show()
+			});
+			$("#merchant-cancel-pop .sayNo").on("click",function(){
+				$("#merchant-cancel-pop").hide()
+			});
+			$("#merchant-cancel-pop .sayYes").on("click",function(){
+				var userId=$("#userId").val();
+				location.href="/JZWX/cancel/Cancellation?Id="+userId
+			});
+			//点击确认做相关的事件,未完成
+			
+			
+			$("#hexiao").click(function(){
+				var userId = $("#userId").val();
+				$.ajax({
+					type: "GET",
+					url: "/JZWX/harvestAddress",
+					async: true,
+					dataType: "json",
+					data: {"href":location.href},
+					success: function(dataaddress){
+						wx.config({
+				              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+				              appId : dataaddress.appId, // 必填，公众号的唯一标识
+				              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+				              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+				              signature : dataaddress.signature,// 必填，签名，见附录1
+				              jsApiList : ['scanQRCode']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+				         });
+						wx.scanQRCode({
+						    needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+						    scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
+						    success: function (res) {
+						    	var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+						    	$.ajax({
+									type: "GET",
+									url: "/JZWX/cancel/CancelByCode",
+									async: true,
+									dataType: "json",
+									data: {"code":result,"userId":userId},
+									success: function(data){
+										if(data.err=="OK"){
+											if(data.state=="本地"){
+												alert("核销成功");
+												location.href="/JZWX/cancel"
+											}else{
+												alert("请提醒客户，所兑换的奖品不属于当前地区，返回公众号查看兑奖通知，按步骤进行异地兑换");
+												location.href="/JZWX/cancel"
+											}
+										}else{
+											alert(data.err);
+										}
+									}
+								});
+							}
+						});
+					},
+					error: function(){
+						
+					}
+				});
+			})
+		})
+		
+			
+		</script>
+</html>

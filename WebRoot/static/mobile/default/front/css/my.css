@@ -1,0 +1,228 @@
+* {
+	padding: 0;
+	margin: 0;
+	color: white;
+}
+
+body {
+	font-family: "Microsoft YaHei";
+	width: 100%;
+	height: auto;
+	overflow-x: hidden;
+}
+
+a {
+	text-decoration: none;
+}
+
+header {
+	width: 100%;
+	height: 10.2rem;
+	background: #ca2424;
+	overflow: hidden;
+}
+
+#header-info {
+	width: 13.55rem;
+	height: 3.5rem;
+	margin-bottom: 0.35rem;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 1.3rem;
+}
+
+#head-portrait {
+	width: 3.4rem;
+	height: 3.4rem;
+	border: 1px solid transparent;
+	border-radius: 100%;
+	overflow: hidden;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#head-portrait img {
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	vertical-align: middle;
+}
+
+.header-public-style {
+	position: absolute;
+}
+
+#head-font {
+	top: 0.2rem;
+	left: 4rem;
+}
+
+#username {
+	width: 5.6rem;
+	height: 1.4rem;
+	overflow: hidden;
+	font-size: 0.8rem;
+	font-weight: bold;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	overflow: hidden;
+}
+
+.total-info {
+	font-size: 18px;
+	margin-top: 0.25rem;
+}
+
+#header-info button {
+	background: none;
+	outline: none;
+	width: 3.8rem;
+	height: 32px;
+	border: 1px solid white;
+	border-radius: 3px;
+	top: 0.4rem;
+	right: 0rem;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+#line {
+	width: 90%;
+	border-top: 0.8px solid #b4b3b3;
+	opacity: 0.7;
+	margin-left: 5%;
+	margin-top: 0.4rem;
+}
+
+#container {
+	width: 80%;
+	text-align: center;
+	margin: 0.6rem auto 12px;
+}
+
+#container ul li {
+	float: left;
+	width: 20%;
+	display: inline-block;
+	font-size: 16px;
+}
+
+#container .weight {
+	font-size: 0.65rem;
+}
+
+#container ul li img {
+	width: 1.75rem;
+	height: 1.75rem;
+}
+
+section ul {
+	width: 100%;
+	height: 15.3rem;
+	background-size: cover;
+	margin: 0 auto;
+}
+
+section ul li {
+	width: 100%;
+	overflow: hidden;
+}
+
+section ul li a {
+	float: left;
+	margin: 0.3rem;
+	width: 29%;
+}
+
+section ul li a img {
+	width: 100%;
+	height: auto;
+	border: 1px solid gainsboro;
+}
+
+#footer-container {
+	width: 100%;
+	height: 56px;
+	position: fixed;
+	bottom: 0;
+	display: flex;
+	overflow: hidden;
+	font-size: 11px;
+}
+
+#footer-container a {
+	padding-top: 8px;
+	flex-flow: row nowrap;
+	flex: 1 1 auto;
+	background: #ca2424;
+	text-align: center;
+}
+
+#footer-container .active {
+	background: #A00504;
+}
+
+#footer-container a img {
+	width: 24px;
+	height: 24px;
+}
+
+/*灰色遮罩层*/
+.fade {
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 99;
+}
+
+/*弹出层*/
+.succ-pop {
+	width: 270px;
+	height: 102px;
+	background: rgba(255, 255, 255, .95);
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -135px;
+	margin-top: -51px;
+	z-index: 999;
+	text-align: center;
+}
+
+.succ-pop h3.title {
+	height: 56px;
+	width: 100%;
+}
+
+.succ-pop h3.title span {
+	display: inline-block;
+	padding-top: 16px;
+	padding-bottom: 22px;
+	font-size: 18px;
+	font-weight: 500;
+	color: #000;
+}
+
+.succ-pop-line {
+	width: 100%;
+	height: 1px;
+	background: rgba(0, 0, 0, .2);
+	transform: scaleY(.5);
+}
+
+.succ-pop h3.confirm {
+	height: 44px;
+	width: 100%;
+	line-height: 44px;
+	font-size: 17px;
+	font-weight: 600;
+	color: #007aff;
+	cursor: pointer;
+}

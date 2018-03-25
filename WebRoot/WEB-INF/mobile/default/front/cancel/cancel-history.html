@@ -1,0 +1,348 @@
+<!--[arg _res,staticPath,basePath,cancel,openId;]-->
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>核销历史</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<link rel="stylesheet" href="${staticPath}/front/css/jquery-ui.min.css" />
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery.ui.datepicker-zh-CN.js"></script>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			
+			body {
+				font-family: "Microsoft YaHei";
+				background: #f8f8f8;
+				font-size: 0.7rem;
+			}
+			
+			input[type="button"],
+			input[type="submit"],
+			input[type="reset"] {
+				-webkit-appearance: none;
+			}
+			ul li{
+				list-style: none;
+				float:left;
+			}
+			ul:after{
+				clear: both;
+				content: '';
+				display: block;
+				width:0;
+				height: 0;
+				visibility: hidden;
+			}
+			header {
+				width: 94%;
+				margin: 1.6rem auto;
+				position: relative;
+			}
+			
+			header input[type="date"] {
+				width: 5.35rem;
+				height: 1.75rem;
+				border-radius: 4px;
+				font-size: 0.54rem;
+				text-align: left;
+				text-indent: 0.3rem;
+				border: 1px solid #c1c1c1;
+				box-shadow: 1px 1px 2px #c1c1c1;
+				background: none;
+				background-color: white;
+				background-size: 100% 100%;
+			}
+			header .search{
+				float:right;
+			}
+			header input[type="button"] {
+				height: 1.75rem;
+				width: 2.35rem;
+				border-radius: 4px;
+				background: #d14f4b;
+				color: white;
+				border: none;
+				box-shadow: 1px 1px 2px #d14f4b;
+				position: absolute;
+				right: 0;
+				font-size: 0.6rem;
+			}
+			header .fonttext{
+				margin-top:0.25rem;
+			}
+			header span {
+				font-weight: bold;
+				padding: 0 4px;
+			}
+			
+			section .section-header {
+				padding-left: 3%;
+				font-weight: bold;
+			}
+			
+			section .reconciliation {
+				border-collapse: collapse;
+				width: 100%;
+				text-align: center;
+				margin: 20px auto 0;
+			}
+			
+			section .reconciliation thead {
+				background: white;
+				border-top: 1px solid #e0e0e0;
+				border-bottom: 1px solid #e0e0e0;
+			}
+			
+			section .reconciliation thead tr {
+				font-size: 0.76rem;
+			}
+			
+			section tr {
+				height: 1.8rem;
+				font-size: 0.6rem;
+			}
+			
+			section .detail {
+				width: 100%;
+				background: white;
+				text-align: center;
+				border-top: 1px solid #e0e0e0;
+				border-bottom: 1px solid #e0e0e0;
+			}
+			
+			section .detail .reconciliation-name {
+				text-align: left;
+				padding-left: 6%
+			}
+			
+			.footer-line {
+				width: 100%;
+				height: 1px;
+				border-top: 1px solid #dedede;
+				margin-top: 10rem;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<header>
+		<input type="hidden" id="openId" value="${openId}" />
+			<ul>
+				<li>
+					<input type="date" class="startDate" id="startTime" oninput="dateCP('startTime','endTime',1)" style="background-image:url('${staticPath}/front/images/cancel/inputbg.png')" />
+				</li>
+				<li class="fonttext">
+					<span>至</span>
+				</li>
+				<li>
+					<input type="date" class="endDate" id="endTime" oninput="dateCP('startTime','endTime',2)" style="background-image:url('${staticPath}/front/images/cancel/inputbg.png')" />
+				</li>
+				<li class="search">
+					<input type="button" id="search" value="搜索" />
+					
+				</li>
+			</ul>
+		</header>
+		<section>
+			<p class="section-header">对账历史记录</p>
+			<table class="reconciliation">
+				<thead>
+					<tr>
+						<th>对账日期</th>
+						<th>对账员</th>
+						<th>奖品数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+				<!--[arg cancel;loop(lists : cancel){]-->
+					<tr>
+						<td>${lists.getAcctionTime()}</td>
+						<td>${lists.getAcctionUser()}</td>
+						<td>${lists.getPrizeNumber()}个</td>
+						<td class="lookInfo">查看明细<span class="ui-icon  ui-icon-circle-triangle-n"></span></td>
+					</tr>
+					<tr id="detail-info" class="detail">
+						<td class="reconciliation-name" colspan="2">${lists.getProductName()}</td>
+						<td></td>
+						<td>${lists.getPrizeNumber()}个</td>
+					</tr>
+				<!--[}]-->
+				</tbody>
+				
+				
+			</table>			
+		</section>
+		<!--<footer>
+			<div class="footer-line"></div>
+		</footer>-->
+	</body>
+	<script>
+		! function(a) {
+			function b() {
+				var b = g.getBoundingClientRect().width;
+				b / c > 640 && (b = 640 * c), a.rem = b / 16, g.style.fontSize = a.rem + "px"
+			}
+			var c, d, e, f = a.document,
+				g = f.documentElement,
+				h = f.querySelector('meta[name="viewport"]'),
+				i = f.querySelector('meta[name="flexible"]');
+			if(h) {
+				var j = h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);
+				j && (d = parseFloat(j[2]), c = parseInt(1 / d))
+			} else if(i) {
+				var j = i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);
+				j && (c = parseFloat(j[2]), d = parseFloat((1 / c).toFixed(2)))
+			}
+			if(!c && !d) {
+				var k = (a.navigator.appVersion.match(/android/gi), a.navigator.appVersion.match(/iphone/gi)),
+					c = a.devicePixelRatio;
+				c = k ? c >= 3 ? 3 : c >= 2 ? 2 : 1 : 1, d = 1 / c
+			}
+			if(g.setAttribute("data-dpr", c), !h)
+				if(h = f.createElement("meta"), h.setAttribute("name", "viewport"), h.setAttribute("content", "initial-scale=" + d + ", maximum-scale=" + d + ", minimum-scale=" + d + ", user-scalable=no"), g.firstElementChild) g.firstElementChild.appendChild(h);
+				else {
+					var l = f.createElement("div");
+					l.appendChild(h), f.write(l.innerHTML)
+				}
+			a.dpr = c, a.addEventListener("resize", function() { clearTimeout(e), e = setTimeout(b, 300) }, !1), a.addEventListener("pageshow", function(a) { a.persisted && (clearTimeout(e), e = setTimeout(b, 300)) }, !1), "complete" === f.readyState ? f.body.style.fontSize = 12 * c + "px" : f.addEventListener("DOMContentLoaded", function() { f.body.setAttribute('fontSize', 12 * c + "px") }, !1), b()
+		}(window);
+	</script>
+	<script>
+		var boolen = false;
+		$(function() {
+		/**
+			//日期开始
+			$(".startDate").datepicker({
+				maxDate: new Date(),
+	            onSelect:function(startText){  
+                   startText=$('.startDate').val();  //开始时间
+                   $('.endDate').datepicker('option','minDate',startText); 
+	            }    
+        });   
+			
+			//结束时间
+			$(".endDate").datepicker({ 
+				maxDate: new Date(),
+	            onSelect:function(endText){  
+                    endText=$('.endDate').val();  
+                    $('.startDate').datepicker('option','maxDate',endText);
+	            }   
+        });  
+		**/
+		
+		$("#search").on("click",function(){
+			var startTime=$("#startTime").val();
+			var endTime=$("#endTime").val();
+			var openId=$("#openId").val();
+			location.href="/JZWX/cancel/getAccounts?startTime="+startTime+"&endTime="+endTime+"&openId="+openId;
+			/* $.ajax({
+				type: "GET",
+				url: "/JZWX/cancel/getAccounts",
+				async: true,
+				dataType: "json",
+				data: {"startTime":startTime,
+					   "endTime":endTime,
+					   "AccountsId":AccountsId,
+					   "canceluser":canceluser
+			    },
+				success: function(data){
+					
+				},
+				error:function(){
+					alert("网络异常！")
+					}
+				}) */
+		})
+		
+
+			//让明细表产生动画，消失和隐藏
+			var boolen=[];
+			var len=$("tbody tr").length/2;
+			for(var i=0;i<len;i++){
+				boolen[i]=false;
+			}
+			$("td.lookInfo").click(function() {
+				var index=$(this).parent().index();
+				if(boolen[index]) {
+					$("tbody tr").eq(index+1).show();
+					boolen[index] = false;
+					$("tbody tr").eq(index).find("td").find(".ui-icon").addClass("ui-icon-circle-triangle-n").removeClass("ui-icon-circle-triangle-s")
+				} else {
+					$("tbody tr").eq(index+1).hide();
+					boolen[index] = true;
+					$("tbody tr").eq(index).find("td").find(".ui-icon").addClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-n")
+				}
+
+			})
+			
+			
+
+		})
+		//日期控件
+		function dateCP(sid, eid, n) {
+			var result = dateCompare(sid, eid, n);
+			if(result.etime) {
+				$("#endTime").val(result.etime);
+			}
+			if(result.stime) {
+				$("#startTime").val(result.stime);
+			}
+		}
+
+		function dateCompare(startId, endId, n) {
+			var startTime = $("#" + startId).val();
+			//监听输入框是否为空，为空则把当前时间赋值给输入框
+			if(!startTime) {
+				startTime = 0;
+			}
+			var endTime = $("#" + endId).val();
+			if(!endTime) {
+				endTime = 0;
+			}
+			var abc = dateCheck(startTime, endTime, n)
+			return abc;
+		}
+
+		function dateCheck(startTime, endTime, n) {
+			//startTime的格式为2017-06-07
+			var stime = new Date(startTime);
+			//stime的格式为中国标准时间
+			var etime = new Date(endTime);
+			var s = Date.parse(stime); //将中国标准时间日期转化成毫秒数
+			var e = Date.parse(etime);
+			var result = {};
+			function compare() {
+				//当开始时间大于结束时间时
+				if(s>e) {
+					//n=1,当对开始时间进行选择的时候，将开始时间赋值给结束时间。
+					//n=2,当对结束时间进行选择的时候，将结束时间赋值给开始时间。
+					if(n == 1) {
+						result.res = "false";
+						result.etime = startTime;
+					} else {
+						result.res = "false";
+						result.stime = endTime;
+					}
+				} else {
+					result.res = "true";
+				}
+			}
+			compare();
+			return result;
+		}
+
+	</script>
+
+</html>

@@ -1,0 +1,310 @@
+<!--[arg _res,staticPath,basePath,Accounts,office,rest,canceluser;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>对账单</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			body {
+				font-family: "Microsoft YaHei";
+			}
+			input[type="button"],
+			input[type="submit"],
+			input[type="reset"] {
+				-webkit-appearance: none;
+			}
+			header{
+				width:100%;
+				height: 6.6rem;
+				background-color:#ffb41b;
+				background-repeat:no-repeat;
+				background-size:cover;
+				color:#fede17;
+				font-weight: bold;
+				text-align: center;
+				text-shadow: 1px 2px 2px #bc6202;
+				letter-spacing: 2px;
+				position: relative;
+			}
+			header .fontOne{
+				font-size:0.6rem;
+				position:absolute;
+				top:10px;
+				left:4rem;
+			}
+			header .fontTwo{
+				height: 2rem;
+			}
+			.awardfont{
+				font-size: 0.7rem;
+			}
+			header .account-user{
+				margin-top:-10px;
+				margin-bottom:10px;
+				font-size:0.6rem;
+				color:white;
+			}
+			section{
+				width:100%;
+				font-size:0.6rem;
+				font-weight: bold;
+			}
+			section p{
+				padding:10px;
+			}
+			section table{
+				width:100%;
+				border-collapse: collapse;
+				margin-bottom: 2rem;
+			}
+			section table tr{
+				line-height: 1rem;
+				text-align: center;
+			}
+			section thead{
+				font-size:0.6rem;
+				border-top:1px solid #dad5d5;
+				border-bottom:1px solid #dad5d5;
+			}
+			section tbody tr{
+				font-weight: normal;
+			}
+			/*section table tr .left{
+				padding-left:10px;
+				text-align: left;
+			}
+			section table tr .right{
+				text-align: right;
+				padding-right:10px;
+			}*/
+			
+			footer{
+				position: relative;
+				
+			}
+			footer div{
+				padding:10px;
+				font-size:0.66rem;
+				border-top:1px solid #dad5d5;
+				border-bottom:1px solid #dad5d5;
+			}
+			footer input[type='button']{
+				position: absolute;
+				color:white;
+				background: #f45046;
+				border:none;
+				border-radius: 2px;
+				height:1.6rem;
+				width:3.6rem;
+				top:3rem;
+				right:30px;
+				font-size:0.66rem;
+			}
+			.space{
+				width:100%;
+				height: 4rem;
+			}
+			
+			/*点击已经对账时的确认对账弹窗*/
+			.mask {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				background: rgba(0, 0, 0, .4);
+				z-index: 998;
+				left: 0;
+				top: 0;
+			}
+			
+			.popUp-window {
+				width: 13.5rem;
+				z-index: 1000;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				margin-left: -6.75rem;
+				margin-top: -3.1rem;
+				background: white;
+				text-align: center;
+			}
+			
+			.popUp-top {
+				width: 96%;
+				margin:0 auto;
+			}
+			
+			.popUp-top div {
+				font-size: 0.9rem;
+				font-weight: 600;
+				margin: 0.9rem auto 0.9rem;
+			}
+			
+			.popUp-top:after {
+				display: block;
+				width: 100%;
+				height: 1px;
+				content: '';
+				transform: scaleY(.5);
+				background-color: rgba(0, 0, 0, .2);
+			}
+			.popUp-bottom {
+				font-size: 0.85rem;
+				color: #007aff;
+				display: flex;
+				height: 2.3rem;
+				line-height: 2.3rem;
+			}
+			
+			.popUp-bottom span {
+				width: 100%;
+				padding: 0 0.25rem;
+				cursor: pointer;
+				position: relative;
+			}
+			
+			.sayNo:after {
+				position: absolute;
+				z-index: 15;
+				top: 0;
+				right: 0;
+				bottom: auto;
+				left: auto;
+				display: block;
+				width: 1px;
+				height: 100%;
+				content: '';
+				transform: scaleX(.5);
+				/*transform-origin: 100% 50%;*/
+				background-color: rgba(0, 0, 0, .2);
+			}
+			
+			.sayYes {
+				font-weight: 600;
+			}
+			.popUp-bottom-confirm{
+				text-align: center;
+				padding:10px;
+				cursor: pointer;
+				color: #007aff;
+				font-weight: bold;
+			}
+			
+			#cancel-success-pop{
+				font-size: 0.85rem;
+			}
+			#cancel-success-pop .popUp-top{
+				margin:0.8rem auto;
+			}
+			#cancel-success-pop .popUp-top div{
+				margin:5px auto 0.8rem;
+				font-weight: 400;
+				font-size: 0.7rem;
+			}
+			.popUp-bottom-confirm{
+				margin-top:-0.8rem;
+				text-align: center;
+				padding:10px;
+				cursor: pointer;
+				color: #007aff;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<header style="background-image:url('${staticPath}/front/images/cancel/duizhuangbg.png')">
+			<p class="fontOne">请确认收到</p>
+			<p class="fontTwo">
+				<div class="account-user">${office.getName()}</div>
+				<h4 class="awardfont">奖品补贴</h4>
+
+		</header>
+		<input type="hidden" value="${rest}" id="rest"/>
+		<input type="hidden" value="${canceluser.getId()}" id="canceluser"/>
+		<input type="hidden" value="${Accounts.getId()}" id="accountsId"/>
+		<section>
+			<p>核销清单</p>
+			<table>
+				<thead>
+					<tr><td class="left">奖品名称</td><td class="right">奖品数量</td></tr>
+				</thead>
+				<tbody>
+					<tr><td class="left">${Accounts.getPrizeName()}</td><td class="right">${Accounts.getPrizeNumber()}瓶</td></tr>
+				</tbody>
+			</table>
+			
+		</section>
+		<footer>
+			<div>统计日期：<span>${Accounts.getAccountsTime()}</span></div>
+			<input id="button" type="button" value="确认对账" />
+		</footer>
+		<div class="space"></div>
+		<!--点击已经对账的确认对账后弹窗-->
+		<div id="merchant-cancel-pop" style="display: none;">
+			<div class="mask"></div>
+			<div class="popUp-window">
+				<div class="popUp-top">
+					<div>您确认要对账吗？</div>
+				</div>
+				<div class="popUp-bottom">
+					<span class='sayNo'>取消</span>
+					<span class="sayYes">确认</span>
+				</div>
+			</div>
+		</div>
+		
+		<!--点击确认之后的弹窗
+		<div id="cancel-success-pop" style="display: none;" >
+			<div class="mask"></div>
+			<div class="popUp-window">
+				<div class="popUp-top">
+					<h4>对账失败</h4>
+					<div>此对账记录已被<span id="name">小敏</span>确认了</div>
+				</div>
+				<div class="popUp-bottom-confirm">
+					确定
+				</div>
+			</div>
+		</div>-->
+	</body>
+	<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+	<script>
+		$(document).ready(function(){
+			//当一进页面就判断是否登陆
+			var rest=$("#rest").val();
+			if(rest=="false"){
+				location.href="/JZWX/cancel/goLogin"
+			}else{
+				//当已经对账了，点击弹出弹窗
+				$("#button").on("click",function(){
+					$("#merchant-cancel-pop").show();
+				}); 
+				//点击取消和确认
+				$("#merchant-cancel-pop .sayNo").on("click",function(){
+					$("#merchant-cancel-pop").hide();
+				});
+				$("#merchant-cancel-pop .sayYes").on("click",function(){
+					$("#merchant-cancel-pop").hide();
+					$("#cancel-success-pop").show();
+					var canceluser = $("#canceluser").val();
+					var accountsId = $("#accountsId").val();
+					location.href="/JZWX/cancel/AccountsConfirm?canceluser="+canceluser+"&accountsId="+accountsId;
+				});
+				/* //点击对账失败的确定
+				$("#cancel-success-pop .popUp-bottom-confirm").on("click",function(){
+					$("#cancel-success-pop").hide();
+				}) */
+			}
+		})
+	</script>
+	</body>
+</html>

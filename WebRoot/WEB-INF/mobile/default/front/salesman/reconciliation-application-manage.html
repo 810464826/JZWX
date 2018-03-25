@@ -1,0 +1,230 @@
+<!--[arg basePath,staticPath,applyList,phone;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>对账申请管理</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/salesman/common/build/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/salesman/common/build/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/reconciliation-application-manage.css"/>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-ui.js"></script>
+	</head>
+	<body style="background-image:url('${staticPath}/front/images/salesman/bg.png');">
+		<div class="container">
+			<div class='container-head' style="background-image:url('${staticPath}/front/images/salesman/00(1).png');">
+				<div class="one">
+					<label for="">申请经销商：</label><input type="text" id="applayDealer" />
+				</div>
+				<div class="two">
+					<ul>
+						<li>
+							时间：
+						</li>
+						<li>
+							<input type="date" class="startDate" id="startTime" oninput="dateCP('startTime','endTime',1)" />
+						</li>
+						<li class="fonttext">
+							<span>—</span>
+						</li>
+						<li>
+							<input type="date" class="endDate" id="endTime" oninput="dateCP('startTime','endTime',2)" />
+						</li>
+				</ul>
+				</div>
+				<div class="three">
+					<label for="">申请状态：</label>
+				<select name="" id="status">
+					<option value=""></option>
+					<option value="1">待处理</option>
+					<option value="2">已处理</option>
+				</select>
+				</div>
+				<div class="search">
+					<p>查询</p>
+				</div>
+			</div>
+			<!--[ loop(a:applyList){  ]-->
+			<div class="footer">
+				<!-- <img src="${staticPath}/front/images/salesman/delete icon.png" alt="" class="deleteImg" /> -->
+				<div class="left">
+					<p>申请经销商：${a.getApplyOffice()}</p>
+					<p>申请人：${a.getApplyUsername()}</p>
+					<p>申请时间：${a.getApplyTime()}</p>
+					<!--[ if(a.getState()=='1'){ ]-->
+					<p>状态：待处理</p>
+					<!--[}else{]-->
+					<p>状态：已处理</p>
+					<!--[}]-->
+				</div>
+				<div class="right">
+					<p>处理经销商：${a.getHandleOffice()}</p>
+					<p>处理人：${a.getHandleUsername()}</p>
+					<p>处理时间：${a.getHandleTime()}</p>
+				</div>
+				<div class="btns">
+					<input type="hidden" value="${a.getCancelId()}" />
+					<p class="lookInfo">查看明细</p>
+				</div>
+			</div>
+			<!--[ } ]-->
+			<!--点击确定弹出层-->
+			<div class="bg-mask sureOk" style="display: none;">
+				<div class="box2">
+					<img src="${staticPath}/front/images/salesman/guanbi -icon.png" alt="" />
+					<p>是否确定删除此对账信息？</p>
+					<div class="surebtn">
+						<h5>确定</h5>
+					</div>
+				</div>	
+			</div>
+		</div>
+		<!--点击确定弹出层-->
+			<div class="bg-mask sure" style="display:none">
+				<div class="box1">
+					<img src="${staticPath}/front/images/salesman/guanbi -icon.png" alt="" />
+					<p class="pop-look">查看详情</p>
+					<div class="table-outer">
+						<table>
+							<thead>
+								<tr>
+									<th>核销人</th><th>奖品名称</th><th>数量(瓶)</th><th>日期</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>	
+			</div>
+		<p class="noData" style="display:none">暂无数据。。。</p>
+		<script>
+		/*动态创建信息表格*/
+		function createTable(content) {
+			/*动态创建表格之前先将除表头外的信息清空*/
+			$('.table-outer tbody').html("");
+				var tr = $("<tr></tr>");
+				tr.appendTo($('.table-outer tbody'));
+				var td1 = $('<td>' + content.userName
+						+ '</td>');
+				var td2 = $('<td>' + content.productName
+						+ '</td>');
+				var td3 = $('<td>' + content.cancelNumber
+						+ '</td>');
+				var td4 =$('<td>' + content.createTime
+						+ '</td>');
+				td1.appendTo(tr);
+				td2.appendTo(tr);
+				td3.appendTo(tr);
+				td4.appendTo(tr);
+		};
+		//日期控件
+		function dateCP(sid, eid, n) {
+			var result = dateCompare(sid, eid, n);
+			if(result.etime) {
+				$("#endTime").val(result.etime);
+			}
+			if(result.stime) {
+				$("#startTime").val(result.stime);
+			}
+		}
+
+		function dateCompare(startId, endId, n) {
+			var startTime = $("#" + startId).val();
+			//监听输入框是否为空，为空则把当前时间赋值给输入框
+			if(!startTime) {
+				startTime = 0;
+			}
+			var endTime = $("#" + endId).val();
+			if(!endTime) {
+				endTime = 0;
+			}
+			var abc = dateCheck(startTime, endTime, n)
+			return abc;
+		}
+
+		function dateCheck(startTime, endTime, n) {
+			//startTime的格式为2017-06-07
+			var stime = new Date(startTime);
+			//stime的格式为中国标准时间
+			var etime = new Date(endTime);
+			var s = Date.parse(stime); //将中国标准时间日期转化成毫秒数
+			var e = Date.parse(etime);
+			var result = {};
+			function compare() {
+				//当开始时间大于结束时间时
+				if(s>e) {
+					//n=1,当对开始时间进行选择的时候，将开始时间赋值给结束时间。
+					//n=2,当对结束时间进行选择的时候，将结束时间赋值给开始时间。
+					if(n == 1) {
+						result.res = "false";
+						result.etime = startTime;
+					} else {
+						result.res = "false";
+						result.stime = endTime;
+					}
+				} else {
+					result.res = "true";
+				}
+			}
+			compare();
+			return result;
+		}
+		
+		//判断有无数据 
+		$(function(){
+			if(${applyList.size()}==0){
+				$(".noData").show();
+			}
+		})
+		
+			/*点击确定删除里面的关闭按钮*/
+			$(".box1 img").click(function(){
+				$(".sure").hide();
+			})
+			/*点击页面的删除按钮*/
+			function a(obj){
+				$(".sure").show();
+			}
+			/*点击确定删除里面的确定按钮*/
+			$(".surebtn,.box2 img").click(function(){
+				$(".sureOk").hide();
+			});
+			//点击删除
+			$(".deleteImg").on("click",function(){
+				$(".sureOk").show();
+			})
+			//查询
+			$(".search").on("click",function(){
+				var applayDealer=$("#applayDealer").val();
+				var startTime=$("#startTime").val();
+				var endTime=$("#endTime").val();
+				var status=$("#status option:checked").val();
+				location.href="/JZWX/cancel/searchApplyAccount?phone=${phone}&applyUserName="+applayDealer+"&startTime="+startTime+"&endTime="+endTime+"&applyState="+status;
+			})
+			$(".lookInfo").on("click",function(){
+				$(".sure").show();
+				var getId=$(this).parent().find("input").val();
+				$.ajax({
+					url : "/JZWX/cancel/lookCancelInfo",
+					type : "POST",
+					dataType : "JSON",
+					async : "false",
+					data : {
+						"cancelId" : getId
+					},
+					success : function(data) {
+						createTable(data);
+					}
+				});
+			});
+			
+			
+		</script>
+		
+	</body>
+</html>

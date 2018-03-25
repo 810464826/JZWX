@@ -1,0 +1,207 @@
+<!--[arg basePath,staticPath,accountList,phone;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>对账管理</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/salesman/common/build/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/salesman/common/build/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/management.css"/>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/jquery-ui.min.css" />
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery.ui.datepicker-zh-CN.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-ui.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-ui.min.js"></script>
+	</head>
+	<body style=" background-image:url('${staticPath}/front/images/salesman/bg.png')">
+		<div class="container">
+			<div class='container-head' style=" background-image:url('${staticPath}/front/images/salesman/00(1).png')">
+				<div class="one">
+					<label for="">对账发起经销商：</label><input type="text" id="dealer" />
+				</div>
+				<div class="two">
+					<label for="">确认对账经销商：</label><input type="text" id="reconciliation-dealer" />
+				</div>
+				<ul>
+					<li>
+					时间：
+					</li>
+					<li>
+						<input type="date" class="startDate" id="startTime" oninput="dateCP('startTime','endTime',1)" />
+					</li>
+					<li class="fonttext">
+						<span>—</span>
+					</li>
+					<li>
+						<input type="date" class="endDate" id="endTime" oninput="dateCP('startTime','endTime',2)" />
+					</li>
+				</ul>
+				<div class="three">
+					<label for="">状态：</label>
+					<select name="" id="status">
+						<option value=""></option>
+						<option value="0">待对账</option>
+						<option value="1">已对账</option>
+					</select>
+				</div>
+				<div class="search">
+					<p>查询</p>
+				</div>
+			</div>
+			<!--[ loop(a:accountList){  ]-->
+			<div class="footer">
+				<div class="left">
+					<p>对账发起人：${a.getAccountsUserId()}</p>
+					<p>发起经销商：${a.getAccountsDistrbutorId()}</p>
+					<p>对账时间：${a.getSelectTime()}</p>
+					<p>状态：${a.getState()}</p>
+					<p>对账业务员：${a.getSalesname()}</p>
+					<p>对账详情：${a.getRemarks()}</p>
+				</div>
+				<div class="right">
+					<p>确认对账人：${a.getAccountsConfirmId()}</p>
+					<p>确认对账经销商：${a.getAccountsConfirmDistrbutor()}</p>
+				</div>
+				<div class="btns">
+					<input type="hidden" value="${a.getCancelId()}" />
+					<p class="lookInfo">查看明细</p>
+				</div>
+			</div>
+			<!--[ } ]-->
+		</div>
+		<!--点击确定弹出层-->
+			<div class="bg-mask sure" style="display:none">
+				<div class="box1">
+					<img src="${staticPath}/front/images/salesman/guanbi -icon.png" alt="" />
+					<p class="pop-look">查看详情</p>
+					<div class="table-outer">
+						<table>
+							<thead>
+								<tr>
+									<th>核销人</th><th>奖品名称</th><th>数量(瓶)</th><th>日期</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>	
+			</div>
+		<p class="noData" style="display:none">暂无数据。。。</p>
+	</body>
+	<script>
+	/*动态创建信息表格*/
+		function createTable(content) {
+			/*动态创建表格之前先将除表头外的信息清空*/
+			$('.table-outer tbody').html("");
+				var tr = $("<tr></tr>");
+				tr.appendTo($('.table-outer tbody'));
+				var td1 = $('<td>' + content.userName
+						+ '</td>');
+				var td2 = $('<td>' + content.productName
+						+ '</td>');
+				var td3 = $('<td>' + content.cancelNumber
+						+ '</td>');
+				var td4 =$('<td>' + content.createTime
+						+ '</td>');
+				td1.appendTo(tr);
+				td2.appendTo(tr);
+				td3.appendTo(tr);
+				td4.appendTo(tr);
+		};
+		//日期控件
+		function dateCP(sid, eid, n) {
+			var result = dateCompare(sid, eid, n);
+			if(result.etime) {
+				$("#endTime").val(result.etime);
+			}
+			if(result.stime) {
+				$("#startTime").val(result.stime);
+			}
+		}
+
+		function dateCompare(startId, endId, n) {
+			var startTime = $("#" + startId).val();
+			//监听输入框是否为空，为空则把当前时间赋值给输入框
+			if(!startTime) {
+				startTime = 0;
+			}
+			var endTime = $("#" + endId).val();
+			if(!endTime) {
+				endTime = 0;
+			}
+			var abc = dateCheck(startTime, endTime, n)
+			return abc;
+		}
+
+		function dateCheck(startTime, endTime, n) {
+			//startTime的格式为2017-06-07
+			var stime = new Date(startTime);
+			//stime的格式为中国标准时间
+			var etime = new Date(endTime);
+			var s = Date.parse(stime); //将中国标准时间日期转化成毫秒数
+			var e = Date.parse(etime);
+			var result = {};
+			function compare() {
+				//当开始时间大于结束时间时
+				if(s>e) {
+					//n=1,当对开始时间进行选择的时候，将开始时间赋值给结束时间。
+					//n=2,当对结束时间进行选择的时候，将结束时间赋值给开始时间。
+					if(n == 1) {
+						result.res = "false";
+						result.etime = startTime;
+					} else {
+						result.res = "false";
+						result.stime = endTime;
+					}
+				} else {
+					result.res = "true";
+				}
+			}
+			compare();
+			return result;
+		}
+		$(function(){
+			//判断有无数据 
+			if(${accountList.size()}==0){
+				$(".noData").show();
+			};
+			$(".box1 img").on("click",function(){
+				$(".sure").hide();
+			});
+			$(".lookInfo").on("click",function(){
+				$(".sure").show();
+				var getId=$(this).parent().find("input").val();
+				$.ajax({
+					url : "/JZWX/cancel/lookCancelInfo",
+					type : "POST",
+					dataType : "JSON",
+					async : "false",
+					data : {
+						"cancelId" : getId
+					},
+					success : function(data) {
+						createTable(data);
+					}
+				});
+			});
+			//查询事件
+			$(".search").on("click",function(){
+				var dealer=$("#dealer").val();
+				var reconciliationDealer=$("#reconciliation-dealer").val();
+				var startTime=$("#startTime").val();
+				var endTime=$("#endTime").val();
+				var status=$("#status option:checked").val();
+				//将以上值传给后台做查询
+				location.href="/JZWX/cancel/searchAccountList?phone=${phone}&applyOffice="+dealer+"&comfirmOffice="+reconciliationDealer+"&startTime="+startTime+"&endTime="+endTime+"&state="+status;
+			})
+			
+			
+		})
+		</script>
+</html>

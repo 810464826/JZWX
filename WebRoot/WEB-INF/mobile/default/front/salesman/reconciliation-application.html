@@ -1,0 +1,124 @@
+<!--[arg basePath,staticPath,cancelList,phone;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>对账申请</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/salesman/common/build/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/salesman/common/build/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/reconciliation-application.css"/>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-ui.js"></script>
+	</head>
+	<body style="background-image:url('${staticPath}/front/images/salesman/bg.png');">
+		<div class="container">
+		<div class='container-head' style="background-image:url('${staticPath}/front/images/salesman/11.png');">
+		</div>
+		<!--[loop(cancel:cancelList){]-->
+			<div class="footer">
+				<div class="left">
+					<p>经销商：${cancel.getCancelOffice()}</p>
+				</div>
+				<div class="right">
+					<p>总计：${cancel.getNumber()}</p>
+				</div>
+				<div class="btns">
+					<input type="hidden" value="${cancel.getId()}" />
+					<p class="lookInfo">查看明细</p>
+					<p class="sureOk">发起申请</p>
+				</div>
+			</div>
+			<!--[ }  ]-->
+		</div>
+		<p class="noData" style="display:none">暂无数据。。。</p>
+		<!--点击确定弹出层-->
+			<div class="bg-mask sure" style="display: none;">
+				<div class="box1">
+					<img src="${staticPath}/front/images/salesman/guanbi -icon.png" alt="" />
+					<p class="pop-look">查看详情</p>
+					<div class="table-outer">
+						<table>
+							<thead>
+								<tr>
+									<th>核销人</th><th>奖品名称</th><th>数量(瓶)</th><th>日期</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>	
+			</div>
+	</body>
+	<script type="text/javascript">
+	/*动态创建信息表格*/
+	function createTable(content) {
+		/*动态创建表格之前先将除表头外的信息清空*/
+		$('.table-outer tbody').html("");
+			var tr = $("<tr></tr>");
+			tr.appendTo($('.table-outer tbody'));
+			var td1 = $('<td>' + content.userName
+					+ '</td>');
+			var td2 = $('<td>' + content.productName
+					+ '</td>');
+			var td3 = $('<td>' + content.cancelNumber
+					+ '</td>');
+			var td4 =$('<td>' + content.createTime
+					+ '</td>');
+			td1.appendTo(tr);
+			td2.appendTo(tr);
+			td3.appendTo(tr);
+			td4.appendTo(tr);
+	};
+	$(function(){  
+		//判断有无数据 
+		if(${cancelList.size()}==0){
+			$(".noData").show();
+		}
+		$(".box1 img").on("click",function(){
+			$(".sure").hide();
+		});
+		$(".lookInfo").on("click",function(){
+			$(".sure").show();
+			var getId=$(this).parent().find("input").val();
+			$.ajax({
+				url : "/JZWX/cancel/lookCancelInfo",
+				type : "POST",
+				dataType : "JSON",
+				async : "false",
+				data : {
+					"cancelId" : getId
+				},
+				success : function(data) {
+					createTable(data)
+				}
+			});
+		});
+		$(".sureOk").on("click",function(){
+		var getId=$(this).parent().find("input").val();
+			 $.ajax({
+				url : "/JZWX/cancel/applyAccount",
+				type : "POST",
+				dataType : "JSON",
+				async : "false",
+				data : {
+					"cancelId" : getId,
+					"phone":'${phone}'
+				},
+				success : function(data) {
+					if(data.result=="true"){
+						alert("申请成功");
+						location.href="/JZWX/cancel/applyAccountManage?phone=${phone}";
+					}else{
+						alert("申请失败");
+					}
+				}
+			}); 
+		})
+	})
+	</script>
+</html>

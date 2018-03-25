@@ -1,0 +1,414 @@
+<!--[arg _res,staticPath,basePath,mall;]-->
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>积分&nbsp;兑换商城</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+		<style>
+			* {
+				padding: 0px;
+				margin: 0px;
+			}
+			
+			body {
+				font-family: "Microsoft YaHei";
+			}
+			
+			.clearfix:after {
+				clear: both;
+				content: "";
+				width: 0;
+				height: 0;
+				visibility: hidden;
+				display: block;
+			}
+			
+			header {
+				border-bottom: 1px solid #c8c8c8;
+			}
+			
+			header div {
+				width: 12.9rem;
+				height: 12.9rem;
+				margin: 10px auto;
+				text-align: center;
+			}
+			
+			header div img {
+				max-width: 100%;
+				max-height: 100%;
+				vertical-align: middle;
+			}
+			
+			header p {
+				width: 96%;
+				margin: 10px auto 0;
+				font-size: 0.7rem;
+			}
+			
+			section {
+				margin-bottom: 3.4rem;
+			}
+			
+			section>p {
+				text-indent: 2%;
+				font-size: 0.8rem;
+				width: 100%;
+				margin: 10px auto;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #c8c8c8;
+			}
+			
+			.font-red {
+				color: #ca2424;
+			}
+			
+			section>div {
+				font-size: 0.7rem;
+			}
+			
+			section>div p:first-child {
+				color: red;
+				text-indent: 2%;
+				text-align:left;
+				float: left;
+				margin-top: 0.5rem;
+				width:27%;
+			}
+			
+			section>div p:first-child+p {
+				width: 70%;
+				float: right;
+				margin-right: 5px;
+			}
+			
+			footer button {
+				width: 100%;
+				height: 68px;
+				background-color: #ca2424;
+				border: none;
+				color: white;
+				font-size: 0.8rem;
+				font-weight: bold;
+				position: fixed;
+				bottom: 0px;
+			}
+			/*弹窗样式*/
+			
+			.mask {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				background: rgba(0, 0, 0, .4);
+				z-index: 998;
+				left: 0;
+				top: 0;
+			}
+			
+			.popUp-window {
+				width: 13.5rem;
+				z-index: 1000;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				margin-left: -6.75rem;
+				margin-top: -3.1rem;
+				background: rgba(255, 255, 255, .95);
+				text-align: center;
+				font-size: 0.9rem;
+				font-weight: 400;
+			}
+			.popUp-top{
+				width:100%;
+			}
+			.popUp-top>div{
+				width:90%;
+				font-family: inherit;
+				margin: 10px auto;
+				text-align: center;
+			}
+			.popUp-top:after {
+				display: block;
+				width: 100%;
+				height: 1px;
+				content: '';
+				transform: scaleY(.5);
+				background-color: rgba(0, 0, 0, 0.2);
+			}
+			
+			.popUp-bottom {
+				color: #007aff;
+				display: flex;
+				height: 2.3rem;
+				line-height: 2.3rem;
+			}
+			
+			.popUp-bottom span {
+				width: 100%;
+				padding: 0 0.25rem;
+				cursor: pointer;
+				position: relative;
+			}
+			
+			.sayNo:after {
+				position: absolute;
+				z-index: 15;
+				top: 0;
+				right: 0;
+				bottom: auto;
+				left: auto;
+				display: block;
+				width: 1px;
+				height: 100%;
+				content: '';
+				transform: scaleX(.5);
+				background-color: rgba(0, 0, 0, .2);
+			}
+			
+			.sayYes {
+				font-weight: 600;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div>
+				<img src="${mall.getImg()}" alt="" />
+			</div>
+			<p>${mall.getPrizeName()}</p>
+		</header>
+		<section>
+			<input type="hidden" id="prizeType" value="${mall.getPrizeType()}"/>
+			<input type="hidden" id="CardId" value="${mall.getCardId()}"/>
+			<input type="hidden" id="ProductId" value="${mall.getName()}"/>
+			<input type="hidden" id="mallId" value="${mall.getId()}"/>
+			<input type="hidden" id="echange" value="${mall.getEchange()}"/>
+			<p>粮食<span class="font-red">${mall.getEchange()}</span>克</p>
+			<div class="clearfix">
+				<p>重要提示：</p>
+				<p>如有质量问题，请拨打售后服务热线：0256-46585200</p>
+			</div>
+		</section>
+		<footer>
+			<button>确认</button>
+		</footer>
+		<!--点击确定出现弹窗-->
+		<div class="mask-pop" style="display: none;">
+			<div class="mask"></div>
+			<div class="popUp-window">
+				<div class="popUp-top">
+					<div>你确定要兑换该商品么？</div>
+				</div>
+				<div class="popUp-bottom">
+					<span class='sayNo'>取消兑换</span>
+					<span class="sayYes">确认兑换</span>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	<script>
+		! function(a) {
+			function b() {
+				var b = g.getBoundingClientRect().width;
+				b / c > 640 && (b = 640 * c), a.rem = b / 16, g.style.fontSize = a.rem + "px"
+			}
+			var c, d, e, f = a.document,
+				g = f.documentElement,
+				h = f.querySelector('meta[name="viewport"]'),
+				i = f.querySelector('meta[name="flexible"]');
+			if(h) {
+				var j = h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);
+				j && (d = parseFloat(j[2]), c = parseInt(1 / d))
+			} else if(i) {
+				var j = i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);
+				j && (c = parseFloat(j[2]), d = parseFloat((1 / c).toFixed(2)))
+			}
+			if(!c && !d) {
+				var k = (a.navigator.appVersion.match(/android/gi), a.navigator.appVersion.match(/iphone/gi)),
+					c = a.devicePixelRatio;
+				c = k ? c >= 3 ? 3 : c >= 2 ? 2 : 1 : 1, d = 1 / c
+			}
+			if(g.setAttribute("data-dpr", c), !h)
+				if(h = f.createElement("meta"), h.setAttribute("name", "viewport"), h.setAttribute("content", "initial-scale=" + d + ", maximum-scale=" + d + ", minimum-scale=" + d + ", user-scalable=no"), g.firstElementChild) g.firstElementChild.appendChild(h);
+				else {
+					var l = f.createElement("div");
+					l.appendChild(h), f.write(l.innerHTML)
+				}
+			a.dpr = c, a.addEventListener("resize", function() { clearTimeout(e), e = setTimeout(b, 300) }, !1), a.addEventListener("pageshow", function(a) { a.persisted && (clearTimeout(e), e = setTimeout(b, 300)) }, !1), "complete" === f.readyState ? f.body.style.fontSize = 12 * c + "px" : f.addEventListener("DOMContentLoaded", function() { f.body.setAttribute('fontSize', 12 * c + "px") }, !1), b()
+		}(window);
+	</script>
+	<script>
+//		点击确认就显示遮罩和弹窗
+		$("footer button").click(function(){
+			$(".mask-pop").show();
+		})
+//		点击取消兑换
+		$(".sayNo").click(function(){
+			$(".mask-pop").hide();
+		})
+//		点击确认兑换,跳转到填写地址的页面
+		$(".sayYes").click(function(){
+			var prizeType = $("#prizeType").val();//奖品类型
+			var CardId = $("#CardId").val();//卡券ID
+			var ProductId = $("#ProductId").val();//卡券ID
+			var mallId = $("#mallId").val();//兑换奖品ID
+			var echange = $("#echange").val();//兑换所需克数
+			$.ajax({
+				type: "GET",
+				url: "/JZWX/harvestAddress",
+				async: true,
+				dataType: "json",
+				data: {"href":location.href},
+				success: function(dataaddress){
+					wx.config({
+			              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+			              appId : dataaddress.appId, // 必填，公众号的唯一标识
+			              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+			              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+			              signature : dataaddress.signature,// 必填，签名，见附录1
+			              jsApiList : ['addCard','openAddress']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+			         });
+				},
+				error: function(){
+					
+				}
+			});		
+			$.ajax({
+				type: "GET",
+				url: "/JZWX/mall/exchangeCard",
+				async: true,
+				dataType: "json",
+				data: {"cardId":CardId,"echange":echange,"mallId":mallId},
+				success: function(carddate){
+					if(carddate.restul == "0"){
+						if(prizeType == "1"){//卡券
+							wx.ready(function(){
+								wx.addCard({
+									cardList: [{
+										cardId: carddate.cardId,
+										cardExt: '{"code":"","openid": "'+carddate.openid+'", "nonce_str":"'+carddate.nonceStr+'","timestamp": "'+carddate.timestamp+'", "signature":"'+carddate.signature+'"}'
+									}], // 需要添加的卡券列表
+									success: function (res){
+										if(res.isSuccess=true){
+											var code=encodeURIComponent(res.cardList[0].code);
+											$.ajax({
+												type: "GET",
+												url: "/JZWX/front/card/SaveTurntableCard",
+												async: true,
+												dataType: "json",
+												data: {"productId":ProductId,"code":code,"openid":carddate.openid,"cardeId":CardId,"info":"兑换","receive":"已领取"},
+												success: function(data){
+													if(data){
+														alert("兑换成功");
+													}else{
+														alert("网络错误");
+													}
+												
+												}
+											});
+										}
+									},
+									cancel:function(res){
+										$.ajax({
+											type: "GET",
+											url: "/JZWX/front/card/SaveTurntableCard",
+											async: true,
+											dataType: "json",
+											data: {"productId":ProductId,"code":"","openid":carddate.openid,"cardeId":CardId,"info":"兑换","receive":"未领取"},
+											success: function(data){
+												if(data){
+													alert("已放入您的粮食兑换宝贝中");
+												}else{
+													alert("网络错误");
+												}
+											
+											}
+										});
+									},
+									fail:function(res){
+										alert("网络错误");
+									}
+								});
+							});	
+						}else if(prizeType == "3"){//物流
+							wx.ready(function(){
+								wx.openAddress({
+									success: function (res) {
+												var provice=res.provinceName;
+												var city= res.cityName;
+												var counties=res.countryName;
+												var detail=res.detailInfo;
+												var tel =res.telNumber;
+												var name=res.userName;
+												var address=provice+city+counties+detail;
+												$.ajax({
+													type: "GET",
+													url: "/JZWX/front/logistics/turntableAddress",
+													async: true,
+													dataType: "json",
+													data: {"productId":ProductId,"name":name,"phone":tel,"address":address,"info":"兑换"},
+													success: function(data){
+														if(data){
+															alert("兑换成功");
+														}else{
+															alert("网络异常，请稍后重新操作");
+														}
+													}
+												});
+									},
+									cancel: function (esg) { 
+										$.ajax({
+											type: "GET",
+											url: "/JZWX/front/logistics/turntableAddress",
+											async: true,
+											dataType: "json",
+											data: {"productId":ProductId,"name":"","phone":"","address":"1","info":"兑换"},
+											success: function(data){
+												if(data){
+													alert("已放入您的粮食兑换宝贝中");
+												}else{
+													alert("网络异常，请稍后重新操作");
+												}
+											}
+										});
+									},
+									fail:function(res){
+										$.ajax({
+											type: "GET",
+											url: "/JZWX/front/logistics/turntableAddress",
+											async: true,
+											dataType: "json",
+											data: {"productId":ProductId,"name":"","phone":"","address":"1","info":"兑换"},
+											success: function(data){
+												if(data){
+													alert("已放入您的粮食兑换宝贝中");
+												}else{
+													alert("网络异常，请稍后重新操作");
+												}
+											}
+										});
+									}
+								});
+							});
+						}
+					}else  if(carddate.restul == "1"){
+						alert("积分不足");
+					}else if(carddate.restul == "2"){
+						alert("奖品已被全部兑换");
+					}
+				}
+			});
+			
+		})
+	</script>
+
+</html>

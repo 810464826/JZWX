@@ -1,0 +1,98 @@
+<!--[arg _res,staticPath,basePath;]-->
+<!DOCTYPE html>
+<html>
+<head>
+<base href="<%=basePath%>">
+<meta name="format-detection" content="telephone=no" />
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>玖孚科技</title>
+<style type="text/css">
+body {
+	background-image: url(${staticPath}/front/images/share.jpg);
+	background-size: cover;
+}
+</style>
+</head>
+<body>
+	<script type="text/javascript"
+		src="${staticPath}/front/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript"
+		src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	<script type="text/javascript">      
+	$.ajax({
+		type: "GET",
+		url: "/Joffro/WXConfig",
+		async: true,
+		dataType: "json",
+		data: {"href":location.href},
+		success: function(data){
+			wx.config({
+	              debug : true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+	              appId : data.appId, // 必填，公众号的唯一标识
+	              timestamp : data.timestamp, // 必填，生成签名的时间戳
+	              nonceStr : data.nonceStr, // 必填，生成签名的随机串
+	              signature : data.signature,// 必填，签名，见附录1
+	              jsApiList : ['onMenuShareTimeline','onMenuShareAppMessage']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+	         });
+		 wx.checkJsApi({
+            jsApiList: [
+                'getLocation',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage'
+            ],
+            success: function (res) {
+                alert(JSON.stringify(res));
+            }
+        });
+		},
+		error: function(){
+			alert("出错");
+		}
+	});
+	wx.ready(function(){
+		//分享朋友
+		wx.onMenuShareAppMessage({
+		    title: '富贵吉祥文化艺术酒转盘大抽奖', // 分享标题
+		    desc: '富贵吉祥文化艺术酒转盘大抽奖，好奖等你拿', // 分享描述
+		    link: 'http://open.weixin.qq.com/connect/oauth2/authorize?appid=wx01bf51f0862b9db5&redirect_uri=http%3a%2f%2fwww.joffro.com%2fJoffro&response_type=code&scope=snsapi_userinfo&state=wx#wechat_redirect', // 分享链接
+		    imgUrl: 'http://www.joffro.com/Joffro/static/img/line.png', // 分享图标
+	 		trigger: function (res) {
+	                alert(res.);
+	            },
+		    success: function () { 
+		        // 用户确认分享后执行的回调函数
+		    	alert("分享成功");
+		    	// 用户确认分享后执行的回调函数,跳转后台
+				//获取openid
+				var openid = $("#openid").val();
+				location.href = "/Joffro/shareOk?openid="+openid;
+		    },
+		    cancel: function () { 
+		        // 用户取消分享后执行的回调函数
+		    	alert("分享失败");
+		    }
+		});
+		//分享朋友圈
+		wx.onMenuShareTimeline({
+		    title: '富贵吉祥文化艺术酒转盘大抽奖', // 分享标题
+		    link: 'http://open.weixin.qq.com/connect/oauth2/authorize?appid=wx01bf51f0862b9db5&redirect_uri=http%3a%2f%2fwww.joffro.com%2fJoffro&response_type=code&scope=snsapi_userinfo&state=wx#wechat_redirect', // 分享链接
+		    imgUrl: 'http://www.joffro.com/Joffro/static/img/line.png', // 分享图标
+		    success: function () { 
+		    	alert("分享成功");
+		    	// 用户确认分享后执行的回调函数,跳转后台
+				//获取openid
+				var openid = $("#openid").val();
+				location.href = "/Joffro/shareOk?openid="+openid;	
+		    },
+		    cancel: function () { 
+		        // 用户取消分享后执行的回调函数
+		        alert("分享失败");
+		    }
+		});
+		
+	});
+	</script>
+</body>
+</html>

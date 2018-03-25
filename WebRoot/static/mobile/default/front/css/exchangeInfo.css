@@ -1,0 +1,106 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: "SimSun";
+	background: #f8f8f8;
+}
+
+.outer-container {
+	width: 100%;
+}
+
+.inner-top,
+.inner-middle,
+.inner-bottom {
+	width: 100%;
+	background: #ffffff;
+	margin-bottom: 0.4rem;
+}
+
+.inner-top {
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.inner-middle {
+	border-bottom: 1px solid #dfdfdf;
+	border-top: 1px solid #dfdfdf;
+}
+
+.inner-bottom {
+	border-top: 1px solid #dfdfdf;
+}
+
+.title {
+	width: 94%;
+	margin: 0 auto;
+	font-size: 0.6rem;
+	font-weight: bold;
+	height: 1.4rem;
+	line-height: 1.4rem;
+	margin-left: 0.512rem;
+}
+
+.inner-line {
+	width: 100%;
+	height: 1px;
+	background: #dfdfdf;
+}
+
+.product {
+	width: 96%;
+	height: 3.92rem;
+	margin: 0 auto;
+	position: relative;
+}
+
+.pic {
+	line-height: 3.4rem;
+	width: 3.4rem;
+	height: 3.4rem;
+	position: absolute;
+	top: 50%;
+	text-align: center;
+	margin-top: -1.7rem;
+}
+
+.pic img {
+	max-width: 100%;
+	max-height: 100%;
+	outline: 1px solid #dcdcdc;
+}
+
+.product-font {
+	position: absolute;
+	left: 3.6rem;
+	font-size: 0.55rem;
+	color: gray;
+}
+
+.product-font p {
+	padding-top: 0.3rem;
+}
+
+.product-name {
+	color:gray;
+}
+
+#send-status {
+	float: right;
+	color: red;
+}
+
+.express-info {
+	font-size: 0.55rem;
+	color: gray;
+	padding: 0.6rem 0;
+	width: 94%;
+	margin: 0 auto;
+}
+
+.express-info p {
+	height: 1rem;
+	line-height: 1rem;
+}

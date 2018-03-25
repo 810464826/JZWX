@@ -1,0 +1,175 @@
+<!--[arg _res,staticPath,basePath,qrcode,info,winningId,deliveryType,deliveryAddress;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>核销</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			body {
+				width:100%;
+				height: 100%;
+				font-family: "Microsoft YaHei";
+			    background-color:#b60114;
+			    background-repeat:no-repeat;
+				background-size:cover;
+				color:white;
+			}
+			a {
+				text-decoration: none;
+				color:#efbb00;
+			}
+			.container{
+				width:100%;
+				text-align: center;
+			}
+			.container .awardImg{
+				width:70%;
+				height: 8.2rem;
+				margin:0 auto;
+				margin-top:8rem;
+			}
+			.container img{
+				max-width:100%;
+				max-height: 100%;
+				border-radius: 4px;
+				
+			}
+			.container .awardName{
+				margin-top:20px;
+			}
+			.container span{
+				font-size:0.6rem;
+				letter-spacing:0.6px;
+			}
+			.container .awardReminder{
+				width:66%;
+				margin:20px auto;
+			}
+		</style>
+	</head>
+	<body style="background-image:url('${staticPath}/front/images/cancel/getAwardBg.jpg')">
+		<div class="container">
+			<div class="awardImg">
+				<img src="${info.getImgid()}" alt="" />
+			</div>
+			<input type="hidden" id="winningId" value="${winningId}" />
+			<input type="hidden" id="deliveryType" value="${deliveryType}" />
+			<input type="hidden" id="deliveryAddress" value="${deliveryAddress}" />
+			
+			<p class="awardName">${info.getName()}&nbsp;${qrcode.getWinningNumber()}${info.getUnit()}</p>
+			<p class="awardReminder">
+				<a href="javascript:void(0)" id="onAddress">点击此处</a>
+				<span>请写您的收货地址，我们将尽快把奖品派送给您。</span>
+			</p>
+		</div>
+	</body>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+				type: "GET",
+				url: "/JZWX/harvestAddress",
+				async: true,
+				dataType: "json",
+				data: {"href":location.href},
+				success: function(dataaddress){
+					wx.config({
+				        debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+				        appId : dataaddress.appId, // 必填，公众号的唯一标识
+				        timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+				        nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+				        signature : dataaddress.signature,// 必填，签名，见附录1
+				        jsApiList : ['openAddress']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+				    });
+				},
+				error: function(){
+					
+				}
+		});
+		$("#onAddress").click(function(){
+			var winningId = $("#winningId").val();
+			var deliveryType = $("#deliveryType").val();
+			var deliveryAddress = $("#deliveryAddress").val();
+			if(deliveryAddress=="1"){
+				if(deliveryType == "1"){
+					location.href="/JZWX/scancode"
+				}
+				if(deliveryType == "2"){
+					location.href="/JZWX/myTurnplate"
+				}
+				if(deliveryType == "3"){
+					location.href="/JZWX/foodExchange"
+				}
+			}else{
+				wx.openAddress({
+					success: function (res) {
+						var provice=res.provinceName;
+						var city= res.cityName;
+						var counties=res.countryName;
+						var detail=res.detailInfo;
+						var tel =res.telNumber;
+						var name=res.userName;
+						var address=provice+city+counties+detail;
+						$.ajax({
+							type: "GET",
+							url: "/JZWX/front/logistics/updateAddress",
+							async: true,
+							dataType: "json",
+							data: {"name":name,"phone":tel,"address":address,"winningId":winningId},
+							success: function(data){
+								if(data){
+									if(deliveryType == "1"){
+										location.href="/JZWX/scancode"
+									}
+									if(deliveryType == "2"){
+										location.href="/JZWX/myTurnplate"
+									}
+									if(deliveryType == "3"){
+										location.href="/JZWX/foodExchange"
+									}
+								}else{
+									alert("已经被领取");
+								}
+							}
+						});
+					},
+					cancel: function (esg) { 
+						if(deliveryType == "1"){
+							location.href="/JZWX/scancode"
+						}
+						if(deliveryType == "2"){
+							location.href="/JZWX/myTurnplate"
+						}
+						if(deliveryType == "3"){
+							location.href="/JZWX/foodExchange"
+						}
+					},
+					fail:function(res){
+						if(deliveryType == "1"){
+							location.href="/JZWX/scancode"
+						}
+						if(deliveryType == "2"){
+							location.href="/JZWX/myTurnplate"
+						}
+						if(deliveryType == "3"){
+							location.href="/JZWX/foodExchange"
+						}
+					}
+				})
+			}
+		});	
+	})
+	</script>
+	<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+
+</html>

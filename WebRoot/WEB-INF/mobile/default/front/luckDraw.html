@@ -1,0 +1,484 @@
+<!--[arg _res,staticPath,basePath,integralrule,turntableRaffle,integravip;]-->
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>抽&nbsp;&nbsp;奖</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta content="telephone=no" name="format-detection">
+<link rel="stylesheet" href="${staticPath}/front/css/luckDraw.css" />
+<link rel="stylesheet" href="${staticPath}/front/css/awardPopUpWin.css" />
+<script type="text/javascript"
+	src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+</head>
+<body
+	style="background-image: url('${staticPath}/front/images/choujiang/bg-red-small.jpg')">
+	<header>
+		<div class="header-fonter">
+			<img src="${staticPath}/front/images/choujiang/title.png" alt="" />
+		</div>
+		<div class="middle-fonter">积分抽大奖，好运转不停</div>
+		<p>
+			你的当前粮食&nbsp;&nbsp;<span id="total-weight">${integravip.getAllIntegral()}</span>&nbsp;克
+		</p>
+	</header>
+	<section>
+		<div class="draw">
+			<canvas id="myCanvas" width="600" height="600"
+				style="background-image: url('${staticPath}/front/images/choujiang/turnplate-bg.png')">您的浏览器不支持！</canvas>
+			<button id="tupBtn"></button>
+			<img src="${staticPath}/front/images/choujiang/turnplate-pointer.png"
+				alt="" />
+		</div>
+		<div class="rule">
+			<span class="rule-font" id="rule-info">抽奖规则</span> <span
+				class="rule-line">|</span> <span class="rule-font"><a
+				href="/JZWX/myTurnplate">我的奖品</a><span>
+		</div>
+		<div class="bottom"></div>
+	</section>
+	<fooder>
+	<div id="footer-container">
+		<a href="/JZWX/index"> <img
+			src="${staticPath}/front/images/my/logoMy.png" alt="" />
+			<div>我的</div>
+		</a> <a href="/JZWX/exchangeMain"> <img
+			src="${staticPath}/front/images/my/logoexchange.png" alt="" />
+			<div>兑换</div>
+		</a> <a href="" class='active'> <img
+			src="${staticPath}/front/images/my/coujiang.png" alt="" />
+			<div>抽奖</div>
+		</a>
+	</div>
+	</fooder>
+
+	<!--抽奖规则-->
+	<div class="mask" style="display: none;">
+		<div class="getAwardRule">
+			<div class="getAward-title">抽奖规则</div>
+			<div>
+				<ul>
+					<li>1、参与一次转盘抽奖，将扣除粮食${integralrule.getValue()}克。</li>
+					<li>2、抽中粮食积分，将马上存入会员的积粮中。</li>
+					<li>3、若抽中奖品，将由宜宾五粮液系列酒品牌营销管理有限公司负责派送。</li>
+					<li>4、本活动最终解释权归宜宾五粮液系列酒品牌营销管理有限公司所有。</li>
+				</ul>
+			</div>
+			<button id='butn'>返回抽奖</button>
+		</div>
+	</div>
+
+	<!--抽奖中奖为积分的页面效果-->
+	<div class='award-mask' style="display: none">
+		<div class="award-background"
+			style="background-image: url('${staticPath}/front/images/choujiang/award-bg.png')">
+			<div class="getAward-reminder">
+				<div class='produce-bg'
+					style="background-image: url('${staticPath}/front/images/choujiang/awardProduce-bg.png')">
+					<div class="awardProduce">
+						<img src="${staticPath}/front/images/choujiang/rice.png" alt="" />
+					</div>
+					
+					<p>
+						恭喜您获得<span class="awardProduceName"></span>
+					</p>
+				</div>
+				<div class="get">
+					<a href="javascript:void(0)"><img
+						src="${staticPath}/front/images/choujiang/getAward.png" alt="" /></a>
+					<p>
+						请点击"<span>领取奖品</span>"。
+					</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<input type="hidden" value="${turntableRaffle}" id="lists" />
+</body>
+<script type="text/javascript"
+	src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+	$(document).ready(function(){
+	
+	
+	
+	    var total_weight=$('#total-weight').html();
+		var aa = ${turntableRaffle};
+		console.log(aa);
+		var awards=[];
+		for(var i in aa){
+			var newObj=new Object();
+			for(var j in aa[i]){
+				newObj.name=i;
+				newObj.id=aa[i].ID;
+				newObj.src=aa[i].ACTIVITY_ID;
+			}
+			awards.push(newObj);
+		}
+		
+		//可抽奖次数后台传值判断,传当前总粮食
+		
+			
+		$('#tupBtn').on('click', function() {
+			if(total_weight >=20) {
+				$.ajax({
+					type: 'POST',
+					url: '/JZWX/turntable/Prize',
+					data: "",
+					success: function(date) {
+						$("#total-weight").html(date.SurplusIntegra);
+						//后台传id确定转盘转动角度，以及停的位置
+						var award = date.prizeId; //后台传给我
+						var productId = date.product.ID; //后台传给我
+						var awardProduceInfo = getAngleByNameOnAwards(award);
+						var angle = awardProduceInfo.stopAngle;
+						//转盘旋转
+						if(award == undefined || angle == undefined) {
+							alert('加载出错，请重新加载！')
+						}
+						runCup(angle);
+						//转盘旋转过程“开始抽奖”按钮无法点击
+						$('#tupBtn').attr("disabled", true);
+						//“开始抽奖”按钮无法点击恢复点击
+						setTimeout(function() {
+							$('#tupBtn').removeAttr("disabled", true);
+							$('.awardProduce img').attr('src', awardProduceInfo.stopSrc);
+							var type=date.product.TYPE;
+							
+							if(type=="1" || type== "3"){
+								$('.awardProduceName').html(awardProduceInfo.stopName + date.product.PRODUCTSIZE+ date.product.UNIT);
+							};
+							if(type=="2"){
+								$('.awardProduceName').html(awardProduceInfo.stopName +date.prizeNumber+date.product.UNIT);
+							};
+							
+							$('body').css("overflow", "hidden");
+							$('.award-mask').show();
+								$.ajax({
+										type: "GET",
+										url: "/JZWX/harvestAddress",
+										async: true,
+										dataType: "json",
+										data: {"href":location.href},
+										success: function(dataaddress){
+											wx.config({
+									              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+									              appId : dataaddress.appId, // 必填，公众号的唯一标识
+									              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+									              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+									              signature : dataaddress.signature,// 必填，签名，见附录1
+									              jsApiList : ['addCard','openAddress']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+									         });
+										},
+										error: function(){
+											
+										}
+									});																
+								$(".get").click(function(){
+									$(this).hide();
+								if(type==1){  //卡卷
+									$.ajax({
+										type: "GET",
+										url: "/JZWX/front/card/turntasbleCard",
+										async: true,
+										dataType: "json",
+										data: {"cardId":date.product.CARD_ID},
+										success: function(carddate){
+											if(carddate.restul == "0"){
+												wx.ready(function(){
+													wx.addCard({
+														cardList: [{
+															cardId: carddate.cardId,
+															cardExt: '{"code":"","openid": "'+carddate.openid+'", "nonce_str":"'+carddate.nonceStr+'","timestamp": "'+carddate.timestamp+'", "signature":"'+carddate.signature+'"}'
+														}], // 需要添加的卡券列表
+														success: function (res){
+															if(res.isSuccess=true){
+																var code=encodeURIComponent(res.cardList[0].code);
+																$.ajax({
+																	type: "GET",
+																	url: "/JZWX/front/card/SaveTurntableCard",
+																	async: true,
+																	dataType: "json",
+																	data: {"productId":productId,"code":code,"openid":carddate.openid,"cardeId":date.product.CARD_ID,"info":"转盘","receive":"已领取"},
+																	success: function(data){
+																		if(data){
+																			location.href="/JZWX/successGetAward"
+																		}else{
+																			alert("网络错误");
+																		}
+																	
+																	}
+																});
+															}
+														},
+														cancel:function(res){
+															
+															$.ajax({
+																type: "GET",
+																url: "/JZWX/front/card/SaveTurntableCard",
+																async: true,
+																dataType: "json",
+																data: {"productId":productId,"code":"","openid":carddate.openid,"cardeId":date.product.CARD_ID,"info":"转盘","receive":"未领取"},
+																success: function(data){
+																	if(data){
+																		location.href="/JZWX/successGetAward"
+																	}else{
+																		alert("网络错误");
+																	}
+																
+																}
+															});
+														},
+														fail:function(res){
+															alert("网络错误");
+														}
+													});
+												});	
+											}else{
+												alert("网络错误，请稍后");
+											}
+										}
+									});
+								}else if(type==2){ //积分
+									$.ajax({
+										type: "GET",
+										url: "/JZWX/turntable/getInteral",
+										async: true,
+										dataType: "json",
+										data: {"productId":productId,"interal":date.prizeNumber,"info":"转盘"},
+										success: function(data){
+											if(data){
+												location.href="/JZWX/successGetAward"
+											}else{
+												alert("网络异常，请稍后重新操作");
+											}
+										}
+									});
+								}else if(type==3){ //物流
+									wx.openAddress({
+										success: function (res) {
+													var provice=res.provinceName;
+										    		var city= res.cityName;
+										    		var counties=res.countryName;
+										    		var detail=res.detailInfo;
+										    		var tel =res.telNumber;
+										    		var name=res.userName;
+										    		var address=provice+city+counties+detail;
+											    	$.ajax({
+														type: "GET",
+														url: "/JZWX/front/logistics/turntableAddress",
+														async: true,
+														dataType: "json",
+														data: {"productId":productId,"name":name,"phone":tel,"address":address,"info":"转盘"},
+														success: function(data){
+															if(data){
+																location.href="/JZWX/successGetAward"
+															}else{
+																alert("网络异常，请稍后重新操作");
+															}
+														}
+													});
+										},
+										cancel: function (esg) { 
+											$.ajax({
+												type: "GET",
+												url: "/JZWX/front/logistics/turntableAddress",
+												async: true,
+												dataType: "json",
+												data: {"productId":productId,"name":"","phone":"","address":"1","info":"转盘"},
+												success: function(data){
+													if(data){
+														location.href="/JZWX/successGetAward"
+													}else{
+														alert("网络异常，请稍后重新操作");
+													}
+												}
+											});
+										},
+										fail:function(res){
+											$.ajax({
+												type: "GET",
+												url: "/JZWX/front/logistics/turntableAddress",
+												async: true,
+												dataType: "json",
+												data: {"productId":productId,"name":"","phone":"","address":"1","info":"转盘"},
+												success: function(data){
+													if(data){
+														location.href="/JZWX/successGetAward"
+													}else{
+														alert("网络异常，请稍后重新操作");
+													}
+												}
+											});
+										}
+									});
+										
+									wx.error(function (res) {
+									});
+								}else{
+									alert("error");
+								}
+								
+							})
+                            
+						}, 6000);
+					},
+					error: function(date) {
+						alert("网络异常！")
+					},
+				})
+				
+			 } else {
+				alert("您的积分不够！");
+			} 
+		});
+		
+		var color = ['#74c593', '#e5bf81', '#e9d78f', '#e378a3', '#9584a3', '#ffcccc', '#447c68', '#9162b7'];
+		var canvas = document.getElementById('myCanvas');
+		var ctx = canvas.getContext('2d');
+		//解决canvas的清晰度，画的时候将画布和画的过程扩大两倍
+		ctx.scale(2, 2);
+		/**
+		 * 画外圆
+		 */
+		function createCircle() {
+			//lineWidth:圆环的宽度
+			var num = awards.length;
+			ctx.lineWidth = 100;
+			var line_width = ctx.lineWidth;
+			var startAngle = 0; //扇形的开始弧度
+			var endAngle = 0; //扇形的终止弧度
+			var x = canvas.width / 4,
+				y = canvas.height / 4;
+			for(var i = 0; i < num; i++) {
+				startAngle = -Math.PI / 2 - Math.PI / num + 2 * Math.PI / num * i;
+				endAngle = -Math.PI / 2 + Math.PI / num + 2 * Math.PI / num * i;
+				ctx.save();
+				ctx.beginPath();
+				ctx.arc(x, y, x - 65, startAngle, endAngle, false);
+				ctx.strokeStyle = color[i];
+				ctx.stroke();
+				ctx.closePath();
+				ctx.restore();
+			}
+		}
+		/**
+		 * 创建文本文字
+		 * @param {Object} awards
+		 */
+		function createCirText() {
+			ctx.textAlign = 'start';
+			ctx.textBaseline = 'middle';
+			var step = 2 * Math.PI / awards.length;
+			var textStartOption;
+			for(var i = 0; i < awards.length; i++) {
+				var awardNameLength = awards[i].name.length;
+				if(awardNameLength == 1) {
+					textStartOption = -10;
+				} else if(awardNameLength == 2) {
+					textStartOption = -18;
+				} else if(awardNameLength == 3) {
+					textStartOption = -23;
+				} else if(awardNameLength == 4) {
+					textStartOption = -27;
+				} else if(awardNameLength == 5) {
+					textStartOption = -38;
+				} else if(awardNameLength == 6) {
+					textStartOption = -40;
+				} else {
+					textStartOption = -42;
+				}
+				ctx.save();
+				ctx.beginPath();
+				//ctx.translate将坐标向右和向上各平移150，类似将画布移动
+				ctx.translate(150, 150);
+				//ctx.rotate将画布旋转多少度，旋转中心是画布的原点
+				ctx.rotate(i * step);
+				awards[i].angle = (-i * step * 180 / Math.PI);
+				ctx.font = " 16px Microsoft YaHei";
+				ctx.fillStyle = '#be051f';
+
+				ctx.fillText(awards[i].name, textStartOption, -120, 80);
+				ctx.closePath();
+				ctx.restore();
+			}
+		}
+		/**
+		 * 画奖品图片
+		 */
+		function createCirPic() {
+			var step = 2 * Math.PI / awards.length;
+			for(var i = 0; i < awards.length; i++) {
+				(function(i) {
+					var img = new Image();
+					img.src = awards[i].src;
+					img.onload = function() {
+						ctx.save();
+						ctx.beginPath();
+						ctx.translate(150, 150);
+						ctx.rotate(i * step);
+						ctx.drawImage(img, -20, -100, 40, 40);
+						ctx.closePath();
+						ctx.restore();
+					}
+				})(i)
+
+			}
+		}
+
+		function turntable(awards) {
+			createCircle();
+			createCirText();
+			createCirPic();
+		}
+		/**
+		 * 通过中奖名称获取角度
+		 * @param {Object} name
+		 */
+		function getAngleByNameOnAwards(id) {
+			for(var i = 0; i < awards.length; i++) {
+				if(id == awards[i].id) {
+					return {
+						stopName: awards[i].name,
+						stopAngle: awards[i].angle,
+						stopSrc: awards[i].src,
+						stopId: awards[i].id
+					}
+				}
+			}
+		}
+
+		function runCup(angle) {
+			var angles = 2160+ angle;
+			var degValue = 'rotate(' + angles + 'deg' + ')';
+			$('#myCanvas').css('-webkit-transform', degValue); //Chrome和Safari
+			$('#myCanvas').css('transform', degValue);
+		}
+		turntable(awards);
+		/**
+		 * 抽奖规则弹窗
+		 */
+		$('.mask').hide();
+		$('#rule-info').on('click', function() {
+			$('.mask').show();
+		})
+		$('#butn').on('click', function() {
+			$('.mask').hide();
+		});
+
+		/**
+		 * 抽奖中积分奖之后的遮罩页面
+		 */
+
+		$('.award-mask').hide();
+	})
+	</script>
+
+<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+</html>

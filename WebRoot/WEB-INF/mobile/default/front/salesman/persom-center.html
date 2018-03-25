@@ -1,0 +1,85 @@
+<!--[arg basePath,staticPath,phone,userType;]-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>个人中心</title>
+		<meta content="yes" name="apple-touch-fullscreen">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta content="telephone=no" name="format-detection">
+		<script src="${staticPath}/front/js/flexible_css.debug.js"></script>
+		<script src="${staticPath}/front/js/flexible.debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="${staticPath}/front/css/salesman/persom-center.css"/>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="${staticPath}/front/js/salesman/common/jquery-ui.js"></script>
+	</head>
+	<body style=" background-image:url('${staticPath}/front/images/salesman/bg.png')">
+		<div class="container">
+      <!-- 个人账户信息 -->
+			<div class='container-head' style="background-image:url('${staticPath}/front/images/salesman/Initiate-reconciliation/faqiduizhang.png');">
+          <div class="container-head-info">
+            <img src="${staticPath}/front/images/salesman/Initiate-reconciliation/zhanghao.png" alt="">
+            <p>账号：<span>${phone}</span></p>
+            <p>角色：<span>${userType}</span></p>
+          </div>
+         <!-- <div class="container-head-btn">
+            <div class="container-head-updatePwd">
+              <p>修改密码</p>
+              <img src='${staticPath}/front/images/salesman/Initiate-reconciliation/xiugaimima-icon.png'>
+            </div>
+            <div class="container-head-out">
+              <p>退出登录</p>
+              <img src='${staticPath}/front/images/salesman/Initiate-reconciliation/login-out.png'>
+            </div>
+          </div>-->
+      </div>
+      <!-- 用户操作部分 -->
+      <div class='container-content'>
+        <div class="container-content-box">
+          <div class="container-content-boxFirst">
+            <div class='content-div' id="apply">
+              <img src='${staticPath}/front/images/salesman/Initiate-reconciliation/duizhangshengqing-icon.png'>
+              <p>对账申请</p>
+            </div>
+            <div class='content-div' id="applyList">
+              <img src='${staticPath}/front/images/salesman/Initiate-reconciliation/duizhangshengqingguanli icon.png'>
+              <p>对账申请管理</p>
+            </div>
+          </div>
+          <div class="container-content-boxSecond">
+			  <div class='content-div' id="checkAdd">
+				  <img src='${staticPath}/front/images/salesman/Initiate-reconciliation/duizhangtianjia-icon.png'>
+				  <p>对账添加</p>
+			</div>
+             <div class='content-div' id="checkManage">
+              <img src='${staticPath}/front/images/salesman/Initiate-reconciliation/duizhangguanli-icon.png'>
+              <p>对账管理</p>
+            </div>
+			
+        </div>
+      </div>
+      <!-- 页尾 -->
+      <div class='container-footer'>
+        <img src="${staticPath}/front/images/salesman/logo01.png" alt="">
+      </div>	
+		</div>
+	</body>
+	<script>
+	$(function(){
+		$("#apply").on("click",function(){
+			location.href="/JZWX/cancel/canApplyList?phone=${phone}";
+		});
+		$("#applyList").on("click",function(){
+			location.href="/JZWX/cancel/applyAccountManage?phone=${phone}";
+		});
+		$("#checkAdd").on("click",function(){
+			location.href="/JZWX/cancel/accountAdd?phone=${phone}";
+		});
+		$("#checkManage").on("click",function(){
+			location.href="/JZWX/cancel/accountListManage?phone=${phone}";
+		});
+		
+	})
+	</script>
+</html>

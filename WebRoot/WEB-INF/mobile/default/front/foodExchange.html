@@ -1,0 +1,289 @@
+<!--[arg _res,staticPath,basePath,winningList;]-->
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>我的粮食兑换宝贝</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta content="telephone=no" name="format-detection">
+<link rel="stylesheet" href="${staticPath}/front/css/scancode.css" />
+<script type="text/javascript"
+	src="${staticPath}/front/js/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="${staticPath}/front/js/jquery-ui.js"></script>
+</head>
+
+<body>
+<!--[if(winningList.size()==0){]-->
+<div class="infoImg">暂无宝贝…</div>
+<!--[}]-->
+	<div class="container">
+		<ul>
+			<!--[arg winningList;loop(winning : winningList){]-->
+			<li><a  href="javascript:void(0)" class="clearfix">
+					<div class="status">
+						<span class="statusText shipping"></span>
+					</div> <input type="hidden" value="${winning.getDistributionStatus()}"
+					class="data" />
+
+					<div class="info-middle">
+						<input type="hidden" value="${winning.getPrizeType()}" class="PrizeType"/>
+						<input type="hidden" value="${winning.getAddressStatus()}" class="AddressStatus"/>
+						<input type="hidden" value="${winning.getId()}" class="winningId"/>
+						<input type="hidden" value="${winning.getCode()}" class="code"/>
+						<input type="hidden" value="${winning.getCardId()}" class="cardid"/>
+						<!--[if('1' == winning.getPrizeType()) {]-->
+						<div class='user-name'>${winning.getName()}${winning.getGrainGram()}克</div>
+						<!--[}else if('2' == winning.getPrizeType()) {]-->
+						<div class='user-name'>${winning.getName()}卡券奖品</div>
+						<!--[}else if('3' == winning.getPrizeType()) {]-->
+						<div class='user-name'>${winning.getName()}物流奖品</div>
+						<!--[}else if('4' == winning.getPrizeType()) {]-->
+						<div class='user-name'>${winning.getName()}卡券物流奖品</div>
+						<!--[}]-->
+						<div class='date'>
+							<span>抽奖日期:</span>
+							<div>${winning.getWinningTime()}</div>
+							<p class="goods"></p>
+						</div>
+					</div>
+					<div class="info-right">
+						<img src="${winning.getPrizeName()}" alt="" />
+					</div>
+			</a>
+				<div class="border-line"></div></li>
+			<!--[}]-->
+		</ul>
+
+	</div>
+	<script>!function(a){function b(){var b=g.getBoundingClientRect().width;b/c>640&&(b=640*c),a.rem=b/16,g.style.fontSize=a.rem+"px"}var c,d,e,f=a.document,g=f.documentElement,h=f.querySelector('meta[name="viewport"]'),i=f.querySelector('meta[name="flexible"]');if(h){var j=h.getAttribute("content").match(/initial-scale=(["']?)([d.]+)1?/);j&&(d=parseFloat(j[2]),c=parseInt(1/d))}else if(i){var j=i.getAttribute("content").match(/initial-dpr=(["']?)([d.]+)1?/);j&&(c=parseFloat(j[2]),d=parseFloat((1/c).toFixed(2)))}if(!c&&!d){var k=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),c=a.devicePixelRatio;c=k?c>=3?3:c>=2?2:1:1,d=1/c}if(g.setAttribute("data-dpr",c),!h)if(h=f.createElement("meta"),h.setAttribute("name","viewport"),h.setAttribute("content","initial-scale="+d+", maximum-scale="+d+", minimum-scale="+d+", user-scalable=no"),g.firstElementChild)g.firstElementChild.appendChild(h);else{var l=f.createElement("div");l.appendChild(h),f.write(l.innerHTML)}a.dpr=c,a.addEventListener("resize",function(){clearTimeout(e),e=setTimeout(b,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(e),e=setTimeout(b,300))},!1),"complete"===f.readyState?f.body.style.fontSize=12*c+"px":f.addEventListener("DOMContentLoaded",function(){f.body.setAttribute('fontSize',12*c+"px")},!1),b()}(window); </script>
+	<script type="text/javascript" src="${staticPath}/front/js/foodExchange.js"></script>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+</body>
+<script type="text/javascript">
+$(document).ready(function(){
+	$.ajax({
+			type: "GET",
+			url: "/JZWX/harvestAddress",
+			async: true,
+			dataType: "json",
+			data: {"href":location.href},
+			success: function(dataaddress){	
+				wx.config({
+		              debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+		              appId : dataaddress.appId, // 必填，公众号的唯一标识
+		              timestamp : dataaddress.timestamp, // 必填，生成签名的时间戳
+		              nonceStr : dataaddress.nonceStr, // 必填，生成签名的随机串
+		              signature : dataaddress.signature,// 必填，签名，见附录1
+		              jsApiList : ['openAddress','openCard','addCard']// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+		         });
+			}
+		});
+			var PrizeType=$(".PrizeType");
+			$.each(PrizeType,function(index,value){
+			var dataStatus = $(".data").eq(index).val();
+			if($(this).val()==1){//积分奖品
+				
+				if(dataStatus==3){
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("已领取");
+				}
+			}
+			
+			if($(this).val()==2){//卡券奖品
+				if(dataStatus==1){ //未配送
+					$(".status").eq(index).addClass("info-left-gray");
+					$(".statusText").eq(index).html("未配送");
+					var AddressStatus=$(".AddressStatus").eq(index).val();
+					var winningId=$(".winningId").eq(index).val();
+						if(AddressStatus==0){//未填写地址
+							$(".goods").eq(index).html("请填写奖品配送地址").css("color","rgb(202, 36, 38)");
+							$("li").eq(index).on("click",function(){
+								address(winningId);
+							});
+						}else{
+							$(".goods").eq(index).html("由活动方配送");
+							$("li").eq(index).on("click",function(){
+								//方法
+								location.href="/JZWX/front/logistics/exchangeInfo?winningId="+winningId;
+							});
+						}	
+				}
+				if(dataStatus==2){ //已配送
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("已配送");
+					var winningId=$(".winningId").eq(index).val();
+					$(".goods").eq(index).html("由活动方配送");
+						$("li").eq(index).on("click",function(){
+							//方法
+							location.href="/JZWX/front/logistics/exchangeInfo?winningId="+winningId;
+						});
+				}
+				if(dataStatus==4){ //未使用
+					$(".status").eq(index).addClass("info-left-gray");
+					$(".statusText").eq(index).html("未使用");
+					var code=$(".code").eq(index).val();
+					var cardId=$(".cardid").eq(index).val();
+					$("li").eq(index).on("click",function(){
+						//方法
+						openCard(code,cardId);
+						
+					});
+				}
+				if(dataStatus==5){ //已使用
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("已使用");
+				}
+				if(dataStatus==6){ //已赠送
+					$(".status").eq(index).addClass("info-left-red");
+				
+					$(".statusText").eq(index).html("已赠送");
+				}
+				if(dataStatus==7){ //赠送中
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("赠送中");
+					var code=$(".code").eq(index).val();
+					var cardId=$(".cardid").eq(index).val();
+					$("li").eq(index).on("click",function(){
+						//方法
+						openCard(code,cardId);
+					});
+				}
+				if(dataStatus==8){ //已删除
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("已删除");
+				}
+				if(dataStatus==9){ //未领取
+					var cardId=$(".cardid").eq(index).val();
+					var winningId=$(".winningId").eq(index).val();
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("未领取");
+					$(".goods").eq(index).html("未领取卡券");
+					$("li").eq(index).on("click",function(){
+						$.ajax({
+							type: "GET",
+							url: "/JZWX/front/card/turntasbleCard",
+							async: true,
+							dataType: "json",
+							data: {"cardId":cardId},
+							success: function(carddate){
+								wx.ready(function(){
+									wx.addCard({
+										cardList: [{
+											cardId: carddate.cardId,
+											cardExt: '{"code":"","openid": "'+carddate.openid+'", "nonce_str":"'+carddate.nonceStr+'","timestamp": "'+carddate.timestamp+'", "signature":"'+carddate.signature+'"}'
+										}], // 需要添加的卡券列表
+										success: function (res){
+											if(res.isSuccess=true){
+												var code=encodeURIComponent(res.cardList[0].code);
+												$.ajax({
+													type: "GET",
+													url: "/JZWX/front/card/SaveCard",
+													async: true,
+													dataType: "json",
+													data: {"code":code,"winningId":winningId},
+													success: function(data){
+														if(data){
+															location.href="/JZWX/foodExchange"
+														}else{
+															alert("网络错误");
+														}
+													
+													}
+												});
+											}
+										},
+										cancel:function(res){
+											
+										},
+										fail:function(res){
+											
+										}
+									});
+								});	
+							}
+						});
+					});
+				}
+			}
+			
+			if($(this).val()==3){//物流奖品
+				var winningId=$(".winningId").eq(index).val();
+				if(dataStatus==1){
+					$(".status").eq(index).addClass("info-left-gray");
+					$(".statusText").eq(index).html("未配送");
+					var AddressStatus=$(".AddressStatus").eq(index).val();
+					
+					if(AddressStatus==0){//未填写地址
+						//填写地址
+						$(".goods").eq(index).html("请填写奖品配送地址").css("color","rgb(202, 36, 38)");
+						$("li").eq(index).on("click",function(){
+							address(winningId);
+						});
+					}else{
+						$(".goods").eq(index).html("由活动方配送");
+						$("li").eq(index).on("click",function(){
+							//方法
+							location.href="/JZWX/front/logistics/exchangeInfo?winningId="+winningId;
+						});
+					}
+				}
+				if(dataStatus==2){//已配送
+					$(".status").eq(index).addClass("info-left-red");
+					$(".statusText").eq(index).html("已配送");
+					$(".goods").eq(index).html("由活动方配送");
+					$("li").eq(index).on("click",function(){
+						//方法
+						location.href="/JZWX/front/logistics/exchangeInfo?winningId="+winningId;
+					});
+				}				
+			}
+		})
+	})
+	function address(winningId){
+		wx.openAddress({
+			success: function (res) {
+			var provice=res.provinceName;
+			var city= res.cityName;
+			var counties=res.countryName;
+			var detail=res.detailInfo;
+			var tel =res.telNumber;
+			var name=res.userName;
+			var address=provice+city+counties+detail;
+				$.ajax({
+					type: "GET",
+					url: "/JZWX/front/logistics/updateAddress",
+					async: true,
+					dataType: "json",
+					data: {"winningId":winningId,"name":name,"phone":tel,"address":address},
+					success: function(data){
+						if(data){
+							location.href="/JZWX/foodExchange"
+						}else{
+							alert("网络异常");
+						}
+					}
+				});
+			},
+			cancel: function (esg) { 
+				
+			},
+			fail:function(res){
+				
+			}
+		});
+	}
+	function openCard(code,cardId){
+		wx.openCard({
+			cardList: [{
+				cardId: cardId,
+				code: code
+			}]// 需要打开的卡券列表
+		});
+	}
+
+</script>
+</html>
